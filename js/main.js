@@ -99,24 +99,27 @@ class NoorApp {
                 this.applyLanguage(isArabic);
                 if (modal) modal.classList.add('hidden');
 
-                // Show PWA install modal after a short delay
-                setTimeout(() => {
-                    const installModal = document.getElementById('install-modal');
-                    if (installModal) {
-                        // Translate the modal text based on chosen language
-                        if (isArabic) {
-                            const title = document.getElementById('install-modal-title');
-                            const body = document.getElementById('install-modal-body');
-                            const btn = document.getElementById('install-modal-btn-text');
-                            const later = document.getElementById('install-modal-later');
-                            if (title) title.innerText = 'ثبّت تطبيق نور!';
-                            if (body) body.innerText = 'أضف نور إلى شاشتك الرئيسية للحصول على أفضل تجربة — وصول فوري، دعم بدون إنترنت، وبدون شريط المتصفح!';
-                            if (btn) btn.innerText = 'تثبيت التطبيق';
-                            if (later) later.innerText = 'ربما لاحقاً';
+                // Show PWA install modal after a short delay — but only once
+                const alreadyShownInstall = localStorage.getItem('noor_install_shown');
+                if (!alreadyShownInstall) {
+                    setTimeout(() => {
+                        const installModal = document.getElementById('install-modal');
+                        if (installModal) {
+                            if (isArabic) {
+                                const title = document.getElementById('install-modal-title');
+                                const body = document.getElementById('install-modal-body');
+                                const btn = document.getElementById('install-modal-btn-text');
+                                const later = document.getElementById('install-modal-later');
+                                if (title) title.innerText = 'ثبّت تطبيق نور!';
+                                if (body) body.innerText = 'أضف نور إلى شاشتك الرئيسية للحصول على أفضل تجربة — وصول فوري، دعم بدون إنترنت، وبدون شريط المتصفح!';
+                                if (btn) btn.innerText = 'تثبيت التطبيق';
+                                if (later) later.innerText = 'ربما لاحقاً';
+                            }
+                            installModal.classList.remove('hidden');
+                            localStorage.setItem('noor_install_shown', 'true');
                         }
-                        installModal.classList.remove('hidden');
-                    }
-                }, 500);
+                    }, 500);
+                }
             };
 
             if (langEnBtn) langEnBtn.addEventListener('click', () => finishWelcome(false));
@@ -511,10 +514,9 @@ class NoorApp {
             container.classList.add('grid-list');
             container.innerHTML = surahs.map(s => `
         <div class="grid-card" style="cursor:pointer;" onclick="window.app.readSurah(${s.number}, '${s.name.replace(/'/g, "\\'")}')">
-          <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">${s.number}</div>
-          <div class="row-time" style="font-family: var(--font-arabic); font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--accent-color);">${s.name}</div>
-          <div class="row-name" style="font-weight: bold; font-size: 1.1rem;">${s.englishName}</div>
-          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">${s.englishNameTranslation}</div>
+          <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.4rem;">${s.number}</div>
+          <div class="row-time" style="font-family: var(--font-arabic); font-size: 1.4rem; margin-bottom: 0.25rem; color: var(--accent-color);">${s.name}</div>
+          <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${s.englishName}</div>
         </div>
       `).join('');
             container.dataset.loaded = 'true';
