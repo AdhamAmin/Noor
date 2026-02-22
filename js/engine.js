@@ -72,9 +72,12 @@ class NoorEngine {
     }
 
     setProgress(percent) {
-        if (!this.circleElement) return;
+        // Always query live in case the element was re-rendered or toggled
+        const circle = document.querySelector('.progress-ring__circle');
+        if (!circle) return;
         const offset = this.circumference - (percent / 100) * this.circumference;
-        this.circleElement.style.strokeDashoffset = offset;
+        circle.style.strokeDasharray = this.circumference;
+        circle.style.strokeDashoffset = offset;
     }
 }
 

@@ -508,10 +508,9 @@ html[dir="rtl"] .welcome-info-box {
 
 .progress-ring__circle {
   stroke: var(--accent-color);
-  stroke-dasharray: 565;
-  /* 2 * PI * r (90) */
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 0.1s linear, stroke var(--transition-speed);
+  stroke-dasharray: 565.49;
+  stroke-dashoffset: 565.49;
+  transition: stroke-dashoffset 0.5s ease, stroke var(--transition-speed);
   stroke-linecap: round;
 }
 
@@ -903,7 +902,7 @@ html[dir="rtl"] .welcome-info-box {
     border-radius: 12px !important;
   }
 
-  /* Show countdown on mobile but hide just the SVG hilal ring */
+  /* Show countdown on mobile — hide only the dark backdrop circle, keep the gold arc */
   .countdown-section {
     background: transparent !important;
     box-shadow: none !important;
@@ -911,7 +910,7 @@ html[dir="rtl"] .welcome-info-box {
     padding: 0 !important;
   }
 
-  .progress-ring {
+  .progress-ring__backdrop {
     display: none !important;
   }
 
