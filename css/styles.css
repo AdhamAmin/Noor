@@ -1,0 +1,1603 @@
+:root {
+  /* Common Variables */
+  --font-family: 'Outfit', sans-serif;
+  --font-arabic: 'Amiri', serif;
+  --transition-speed: 0.3s;
+  --border-radius: 24px;
+
+  /* Fluid Typography Scale (mobile → desktop) */
+  --text-xs: clamp(0.65rem, 1.3vw, 0.8rem);
+  /* small labels */
+  --text-sm: clamp(0.8rem, 1.6vw, 1rem);
+  /* body small */
+  --text-base: clamp(1rem, 1.8vw, 1.15rem);
+  /* base */
+  --text-md: clamp(1.15rem, 2vw, 1.35rem);
+  /* subheadings */
+  --text-lg: clamp(1.35rem, 2.5vw, 1.6rem);
+  /* card headers */
+  --text-xl: clamp(1.8rem, 3.5vw, 2.4rem);
+  /* prayer name */
+  --text-2xl: clamp(2.5rem, 6vw, 5rem);
+  /* large clock */
+  --text-3xl: clamp(3rem, 8vw, 6.5rem);
+  /* countdown timer */
+
+  /* Fluid Spacing */
+  --space-sm: clamp(0.5rem, 1.5vw, 1rem);
+  --space-md: clamp(1rem, 2vw, 1.5rem);
+  --space-lg: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/* ---------------
+   THEMES
+   --------------- */
+
+/* Dark Theme (Default) */
+
+
+/* Light Theme — matches Ramadan dark/gold aesthetic */
+.theme-light {
+  --bg-color: #030712;
+  --bg-gradient: linear-gradient(180deg, #030712 0%, #0d1633 100%);
+  --card-bg: rgba(15, 23, 42, 0.75);
+  --card-border: rgba(212, 175, 55, 0.2);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --accent-color: #d4af37;
+  /* Classic Gold */
+  --accent-glow: rgba(212, 175, 55, 0.45);
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --modal-bg: #0f172a;
+  --icon-color: #f1f5f9;
+}
+
+/* Ramadan Theme */
+.theme-ramadan {
+  --bg-color: #030712;
+  --bg-gradient: linear-gradient(180deg, #030712 0%, #0d1633 100%);
+  --card-bg: rgba(15, 23, 42, 0.7);
+  --card-border: rgba(212, 175, 55, 0.15);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --accent-color: #facc15;
+  /* Bright Gold */
+  --accent-glow: rgba(250, 204, 21, 0.5);
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --modal-bg: #0f172a;
+  --icon-color: #f1f5f9;
+}
+
+/* ---------------
+   RESET & BASICS
+   --------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-gradient);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mt-1 {
+  margin-top: 0.5rem;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+
+/* ---------------
+   CANVAS BACKGROUND
+   --------------- */
+#particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------------
+   SPLASH SCREEN
+   --------------- */
+.splash {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-color);
+  z-index: 9999;
+  flex-direction: column;
+  transition: opacity 0.5s ease;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.splash-title {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-primary);
+}
+
+.splash-subtitle {
+  font-size: 1rem;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+/* Ramadan Cannon (Madfaa) Loader */
+.madfaa-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.madfaa {
+  position: relative;
+  width: 100px;
+  height: 60px;
+}
+
+/* Cannon Barrel */
+.madfaa-barrel {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  width: 70px;
+  height: 18px;
+  background: var(--accent-color);
+  border-radius: 4px;
+  transform-origin: left center;
+  transform: rotate(-15deg);
+  animation: cannon-fire 2s ease-in-out infinite;
+}
+
+/* Cannon Wheel */
+.madfaa-wheel {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 4px solid var(--text-primary);
+  background: var(--card-bg);
+}
+
+.madfaa-wheel::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: var(--text-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Smoke Particle */
+.madfaa-smoke {
+  position: absolute;
+  top: -10px;
+  right: -20px;
+  width: 15px;
+  height: 15px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  opacity: 0;
+  animation: smoke-puff 2s ease-out infinite;
+  animation-delay: 0.2s;
+}
+
+.setting-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 1.5rem 0;
+  opacity: 0.5;
+}
+
+/* Welcome modal specific styles */
+.welcome-step {
+  transition: opacity 0.3s ease;
+}
+
+.welcome-info-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+html[dir="rtl"] .welcome-info-box {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.welcome-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+@keyframes cannon-fire {
+
+  0%,
+  10% {
+    transform: rotate(-15deg);
+  }
+
+  15% {
+    transform: rotate(-25deg);
+  }
+
+  /* recoil */
+  30%,
+  100% {
+    transform: rotate(-15deg);
+  }
+}
+
+@keyframes smoke-puff {
+
+  0%,
+  10% {
+    opacity: 0;
+    transform: scale(0.5) translate(0, 0);
+  }
+
+  15% {
+    opacity: 0.8;
+    transform: scale(1) translate(10px, -10px);
+  }
+
+  40%,
+  100% {
+    opacity: 0;
+    transform: scale(2) translate(30px, -30px);
+  }
+}
+
+
+/* ---------------
+   APP CONTAINER
+   --------------- */
+.app-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ---------------
+   HEADER
+   --------------- */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.location-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.location-container .material-symbols-rounded {
+  color: var(--accent-color);
+  font-size: 1.8rem;
+}
+
+.location-text h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.location-text p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.settings-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--icon-color);
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn:hover {
+  background: var(--card-bg);
+  transform: rotate(45deg);
+}
+
+/* ---------------
+   NEXT PRAYER HIGHLIGHT
+   --------------- */
+.next-prayer-card {
+  position: relative;
+  border-radius: var(--border-radius);
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  padding: 1.5rem 3rem;
+  /* Wider padding horizontally */
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  width: 100% !important;
+  /* Stretch past normal bounds */
+  max-width: 600px;
+  margin-right: -20%;
+  /* Push towards the right */
+  z-index: 10;
+}
+
+.card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, var(--accent-glow), transparent 60%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+.card-content-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  gap: 1rem;
+}
+
+/* Prayer Name + Time — centered in the bar */
+.prayer-center-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.prayer-center-group .prayer-name {
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.prayer-center-group .prayer-time {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  color: var(--accent-color);
+  font-weight: 500;
+  margin-top: 0.15rem;
+}
+
+/* Dates — stacked vertically on the right */
+.prayer-right-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 0.15rem;
+}
+
+.date-gregorian {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.date-hijri {
+  font-family: var(--font-arabic);
+  font-size: 1.1rem;
+  color: var(--accent-color);
+}
+
+/* Legacy fallback for .card-content .label and .prayer-name */
+.card-content .prayer-name {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.card-content .prayer-time {
+  font-size: 1.25rem;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+/* ---------------
+   COUNTDOWN CIRCLE
+   --------------- */
+.countdown-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.countdown-circle {
+  position: relative;
+  width: clamp(140px, 40vw, 200px);
+  height: clamp(140px, 40vw, 200px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-ring__backdrop {
+  stroke: var(--card-border);
+}
+
+.progress-ring__circle {
+  stroke: var(--accent-color);
+  stroke-dasharray: 565;
+  /* 2 * PI * r (90) */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.1s linear, stroke var(--transition-speed);
+  stroke-linecap: round;
+}
+
+.countdown-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.countdown-timer {
+  font-size: 2.2rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+
+.countdown-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+}
+
+/* Timer Flashing Animation */
+.flash-text {
+  animation: textFlash 0.5s infinite alternate;
+}
+
+@keyframes textFlash {
+  from {
+    color: var(--text-primary);
+  }
+
+  to {
+    color: var(--accent-color);
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+}
+
+/* ---------------
+   TODAY PRAYERS LIST
+   --------------- */
+.today-prayers {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.prayers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.prayer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  transition: all var(--transition-speed);
+}
+
+.prayer-row.completed {
+  opacity: 0.5;
+}
+
+.prayer-row.active {
+  background: rgba(212, 175, 55, 0.1);
+  border: 2px solid var(--accent-color);
+  /* Thicker gold frame */
+  transform: scale(1.05);
+  /* Slightly pop out more */
+  box-shadow: 0 0 20px var(--accent-glow);
+  z-index: 2;
+  position: relative;
+}
+
+/* Remove old pulsing that changed colors, keep it static glowing gold frame */
+.prayer-row.active .row-name {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.row-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.row-time {
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------
+   SETTINGS MODAL
+   --------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  position: relative;
+  background: var(--modal-bg);
+  width: 100%;
+  max-width: 400px;
+  border-radius: 30px;
+  padding: 1.5rem 1.25rem;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal.hidden .modal-content {
+  transform: scale(0.95) translateY(20px);
+  opacity: 0;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+}
+
+.icon-btn {
+  background: rgba(150, 150, 150, 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-color);
+  cursor: pointer;
+}
+
+.settings-group {
+  margin-bottom: 1rem;
+}
+
+.settings-group h3 {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.theme-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  padding: 0.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.theme-btn.active {
+  border-color: var(--accent-color);
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--accent-color);
+}
+
+/* Toggles */
+.setting-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.setting-toggle input {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background: var(--card-border);
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  background: #fff;
+  transition: 0.3s;
+}
+
+.setting-toggle input:checked+.toggle-slider {
+  background: var(--accent-color);
+}
+
+.setting-toggle input:checked+.toggle-slider::before {
+  transform: translateX(24px);
+}
+
+/* Selects */
+.custom-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  outline: none;
+  appearance: none;
+}
+
+.custom-select:focus {
+  border-color: var(--accent-color);
+}
+
+/* ---------------
+   MADFAA OVERLAY
+   --------------- */
+.madfaa-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.madfaa-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.madfaa-flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+}
+
+.madfaa-flash.fire {
+  animation: cannonFlash 0.5s ease-out forwards;
+}
+
+@keyframes cannonFlash {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.madfaa-text {
+  font-family: var(--font-arabic);
+  font-size: 4rem;
+  color: var(--accent-color);
+  opacity: 0;
+  transform: scale(0.8);
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.madfaa-text.reveal {
+  animation: floatReveal 4s ease-out forwards;
+}
+
+@keyframes floatReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  90% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes zekrRipple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ---------------
+   DASHBOARD ROW (3 Columns)
+   --------------- */
+.app-container {
+  justify-content: center;
+  /* Center vertically overall */
+}
+
+.main-dashboard-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex-grow: 1;
+}
+
+.dashboard-left,
+.dashboard-center,
+.dashboard-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* ---- MOBILE: stack vertically, cards full width ---- */
+@media (max-width: 899px) {
+  .main-dashboard-row {
+    gap: clamp(0.5rem, 2vw, 1rem);
+  }
+
+  /* Force the Center column (Countdown + Next Prayer) to the top on mobile */
+  .dashboard-center {
+    order: -1;
+  }
+
+  /* Next prayer card — tight rectangle on mobile */
+  .next-prayer-card {
+    padding: 0.5rem 1.25rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* Prayer name scales with screen width */
+  .card-content .prayer-name {
+    font-size: clamp(1.4rem, 6vw, 2.2rem) !important;
+  }
+
+  .card-content .prayer-time {
+    font-size: clamp(0.9rem, 3.5vw, 1.2rem) !important;
+  }
+
+  /* Shrink dates margin on mobile to save vertical space */
+  .next-prayer-card .date-container {
+    margin-top: 0.15rem !important;
+  }
+
+  /* Big clock — fluid */
+  .large-clock h1 {
+    font-size: clamp(1.8rem, 6vw, 3rem) !important;
+  }
+
+  /* Big clock inside the ring on mobile */
+  .clock-in-circle {
+    display: block;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+  }
+
+  .countdown-timer {
+    font-size: clamp(1.4rem, 6vw, 2rem) !important;
+  }
+
+  .countdown-label {
+    font-size: clamp(0.6rem, 2vw, 0.8rem) !important;
+  }
+
+  /* Doaa card — fluid padding and text */
+  .doaa-card {
+    padding: clamp(0.5rem, 2.5vw, 1rem);
+  }
+
+  .doaa-text {
+    font-size: clamp(0.9rem, 3.5vw, 1.3rem) !important;
+    line-height: 1.8;
+  }
+
+  /* Prayer list rows — fluid */
+  .today-prayers-side {
+    padding: clamp(0.4rem, 2vw, 0.75rem);
+  }
+
+  .prayer-row {
+    padding: clamp(0.25rem, 1.5vw, 0.5rem) clamp(0.4rem, 2vw, 0.75rem);
+  }
+
+  .row-name,
+  .row-time {
+    font-size: clamp(0.7rem, 2.5vw, 0.95rem) !important;
+  }
+
+  /* App container — fluid side padding and pull content up 120px */
+  .app-container {
+    padding: clamp(0.75rem, 3vw, 1.5rem);
+    margin-top: -120px;
+  }
+
+  /* Visibility Toggles */
+  .desktop-only-clock {
+    display: none !important;
+  }
+
+  .mobile-only-clock {
+    display: block !important;
+  }
+
+  .hide-mobile-text {
+    display: none !important;
+  }
+}
+
+/* ---- DESKTOP (900px+): CSS Grid, next-prayer spans full top row ---- */
+@media (min-width: 900px) {
+  .main-dashboard-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem 2rem;
+    align-items: start;
+    min-height: 60vh;
+  }
+
+  /* Doaa card — left column, second row */
+  .dashboard-left {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    align-self: center;
+  }
+
+  /* Center column holds both next prayer card (row 1 spanning all cols) and countdown (row 2) */
+  .dashboard-center {
+    display: contents;
+    /* lets children participate in the parent grid */
+  }
+
+  /* Next prayer card spans full top row */
+  .next-prayer-card {
+    grid-column: 1 / 4;
+    grid-row: 1 / 2;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0.5rem 3rem !important;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Countdown — center column, second row */
+  .countdown-section {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Prayer list — right column, second row */
+  .dashboard-right {
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;
+    align-self: center;
+  }
+
+  /* Visibility Toggles */
+  .desktop-only-clock {
+    display: block !important;
+  }
+
+  .mobile-only-clock {
+    display: none !important;
+  }
+}
+
+/* Large Desktop Clock Style */
+.large-clock {
+  flex: 1;
+}
+
+.large-clock h1 {
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+body.theme-light .large-clock h1 {
+  color: #0f172a;
+  /* Dark Navy for contrast in light mode */
+}
+
+/* Clock in Countdown Circle */
+.clock-in-circle {
+  display: block;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.25rem;
+}
+
+/* Doaa Card */
+.doaa-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.doaa-card .label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.doaa-text {
+  font-size: var(--text-md);
+  direction: rtl;
+  line-height: 2;
+  color: var(--text-primary);
+}
+
+.countdown-section {
+  flex: 0 0 auto;
+}
+
+.countdown-circle {
+  position: relative;
+  width: clamp(200px, 25vw, 300px);
+  height: clamp(200px, 25vw, 300px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.countdown-circle svg.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+
+.countdown-timer {
+  font-size: 3rem;
+}
+
+.countdown-label {
+  font-size: 1rem;
+}
+
+.today-prayers-side {
+  flex: 0 0 auto;
+  min-width: 0;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-top: auto;
+  /* Push down */
+}
+
+.prayers-list-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Tighter gap */
+}
+
+.prayer-row {
+  padding: 0.5rem 0.75rem;
+  /* Smaller padding */
+}
+
+.row-name {
+  font-size: 1.25rem;
+  /* Smaller */
+}
+
+.row-time {
+  font-size: 1.25rem;
+  /* Smaller */
+}
+
+/* ---------------
+   BOTTOM NAVIGATION
+   --------------- */
+.app-container {
+  padding-bottom: 80px;
+  /* Space for bottom nav */
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: var(--card-bg);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom);
+  /* iOS support */
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: color var(--transition-speed);
+  font-family: var(--font-family);
+  width: 33%;
+}
+
+.nav-item span.material-symbols-rounded {
+  font-size: 1.5rem;
+  transition: transform 0.2s;
+}
+
+.nav-item span:last-child {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.nav-item.active {
+  color: var(--accent-color);
+}
+
+.nav-item.active span.material-symbols-rounded {
+  font-variation-settings: 'FILL' 1;
+  transform: translateY(-2px);
+}
+
+/* ---------------
+   GRID VIEWS (QURAN & AZKAR)
+   --------------- */
+.grid-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.grid-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+}
+
+.grid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--accent-color);
+}
+
+/* ---------------
+   QURAN & AZKAR CONTAINERS (RTL)
+   --------------- */
+.quran-container,
+.azkar-container {
+  direction: rtl;
+  /* Right-to-left layout for Arabic grid content */
+}
+
+/* ---------------
+   QURAN FULL SCREEN READER
+   --------------- */
+#quran-reader {
+  font-family: var(--font-arabic);
+}
+
+#quran-reader:not(.hidden) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--bg-color);
+  z-index: 9999;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+body.reading-quran {
+  overflow: hidden;
+}
+
+.floating-nav-btn {
+  position: fixed;
+  bottom: 100px;
+  /* Floating securely above the 70px bottom nav-bar */
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  width: 40px;
+  /* Made smaller */
+  height: 40px;
+  /* Made smaller */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.floating-nav-btn span {
+  font-size: 1.25rem;
+  /* Slightly smaller icon to fit the 40px circle */
+}
+
+.floating-nav-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.floating-nav-btn.left-btn {
+  /* It's meant to be Next (Id+1) for RTL, so visually on the left of center */
+  left: calc(50% - 45px);
+  /* Positioned to the left of the exact center */
+}
+
+.floating-nav-btn.right-btn {
+  /* It's meant to be Prev (Id-1) for RTL, visually on the right of center */
+  left: calc(50% + 5px);
+  /* Positioned to the right of the exact center */
+}
+
+/* ---------------
+   VIEWS LOGIC
+   --------------- */
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+/* Responsive constraints */
+@media (min-width: 600px) {
+  .app-container {
+    padding-top: 2rem;
+  }
+
+  .modal-content {
+    border-radius: 30px;
+    margin-bottom: 2rem;
+  }
+}
+
+/* ---------------
+   RAMADAN THEME WATERMARK
+   --------------- */
+body.theme-ramadan::after {
+  content: '☪';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80vmin;
+  color: rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+  z-index: 1;
+  line-height: 1;
+}
+
+/* ---------------
+   RAMADAN THEME DECORATIVE ELEMENTS
+   --------------- */
+.ramadan-decorations {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  /* Covers full viewport for scattered shapes */
+  overflow: hidden;
+}
+
+/* Only show in ramadan theme */
+body.theme-ramadan .ramadan-decorations {
+  display: block;
+}
+
+.zeena-pennants {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  pointer-events: none;
+}
+
+.fanoos {
+  position: absolute;
+  top: -5px;
+  width: 80px;
+  height: 160px;
+  transform-origin: top center;
+  animation: swingFanoos 4s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
+  margin-left: -40px;
+  /* Offset half width to center on the % left */
+}
+
+.fanoos-left {
+  left: 5%;
+  animation-delay: 0s;
+}
+
+.fanoos-inner-left {
+  left: 27.5%;
+  animation-delay: -1s;
+}
+
+.fanoos-center {
+  left: 50%;
+  animation-delay: -3s;
+}
+
+.fanoos-inner-right {
+  left: 72.5%;
+  animation-delay: -0.5s;
+}
+
+.fanoos-right {
+  left: 95%;
+  animation-delay: -2s;
+}
+
+@keyframes swingFanoos {
+  0% {
+    transform: rotate(-8deg);
+  }
+
+  100% {
+    transform: rotate(8deg);
+  }
+}
+
+/* Push content down slightly on Ramadan theme to breathe below decorations */
+body.theme-ramadan .app-container {
+  padding-top: 50px;
+}
+
+/* Mobile: fix container and reduce padding */
+@media (max-width: 899px) {
+  body.theme-ramadan .app-container {
+    padding-top: 0px;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .zeena-pennants {
+    height: 70px;
+  }
+
+  /* Make all 5 fawaniss fit on mobile */
+  .fanoos {
+    width: 45px;
+    height: 90px;
+    margin-left: -22.5px;
+  }
+}
+
+@keyframes ambientFloat {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  100% {
+    transform: translateY(-12px) rotate(4deg);
+  }
+}
+
+/* Crescent Bottom-Left — top zone, far left 5% */
+.ambient-crescent-bl {
+  width: 90px;
+  height: 90px;
+  top: 10px;
+  left: 5%;
+  animation-delay: -2s;
+}
+
+/* 8-Point Star — top zone, 18% from left */
+.ambient-star-tr {
+  width: 65px;
+  height: 65px;
+  top: 15px;
+  left: 18%;
+  animation-delay: -1s;
+}
+
+/* Diamond Gem — top zone, 32% from left */
+.ambient-diamond-ml {
+  width: 50px;
+  height: 75px;
+  top: 5px;
+  left: 32%;
+  animation-delay: -3.5s;
+}
+
+/* Small Crescent — top zone, 47% center */
+.ambient-crescent-mr {
+  width: 60px;
+  height: 60px;
+  top: 12px;
+  left: 47%;
+  animation-delay: -6s;
+}
+
+/* 6-Point Star — top zone, 61% from left */
+.ambient-hexstar-lr {
+  width: 60px;
+  height: 60px;
+  top: 8px;
+  left: 61%;
+  animation-delay: -4s;
+}
+
+/* Tiny Star — top zone, 74% from left */
+.ambient-star-ll {
+  width: 45px;
+  height: 45px;
+  top: 18px;
+  left: 74%;
+  animation-delay: -0.5s;
+}
+
+/* Hexagon — top zone, 84% from left */
+.ambient-hex-ucl {
+  width: 55px;
+  height: 65px;
+  top: 5px;
+  left: 84%;
+  animation-delay: -5s;
+}
+
+/* Crescent — top zone, far right 93% */
+.ambient-crescent-rb {
+  width: 75px;
+  height: 75px;
+  top: 10px;
+  left: 93%;
+  animation-delay: -2.5s;
+}
+
+/* On mobile, shrink the ambient shapes a bit */
+@media (max-width: 899px) {
+  body.theme-ramadan .app-container {
+    padding-top: 140px;
+  }
+
+  .ambient-shape {
+    opacity: 0.45;
+  }
+
+  /* Scale down shapes proportionally on mobile */
+  .ambient-crescent-bl {
+    width: 60px;
+    height: 60px;
+  }
+
+  .ambient-star-tr {
+    width: 45px;
+    height: 45px;
+  }
+
+  .ambient-diamond-ml {
+    width: 35px;
+    height: 55px;
+  }
+
+  .ambient-crescent-mr {
+    width: 45px;
+    height: 45px;
+  }
+
+  .ambient-hexstar-lr {
+    width: 45px;
+    height: 45px;
+  }
+
+  .ambient-star-ll {
+    width: 35px;
+    height: 35px;
+  }
+
+  .ambient-hex-ucl {
+    width: 40px;
+    height: 50px;
+  }
+
+  .ambient-crescent-rb {
+    width: 55px;
+    height: 55px;
+  }
+}
