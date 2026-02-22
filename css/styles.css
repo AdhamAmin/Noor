@@ -885,6 +885,52 @@ html[dir="rtl"] .welcome-info-box {
   width: 100%;
 }
 
+/* ---- MOBILE BACKGROUND IMAGE ---- */
+@media (max-width: 899px) {
+  body {
+    background-image: url('../assets/mobile-bg.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* Keep gradient as overlay so text stays readable */
+    background-blend-mode: normal;
+  }
+
+  /* Tint overlay so the image blends nicely with the dark UI */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 7, 18, 0.45);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Particles canvas stays on top of the tint overlay */
+  #particles-canvas {
+    z-index: 1;
+  }
+
+  /* App content stays above everything */
+  .app-container {
+    position: relative;
+    z-index: 10;
+  }
+
+  .bottom-nav {
+    z-index: 50;
+  }
+
+  .modal {
+    z-index: 1000;
+  }
+
+  .splash {
+    z-index: 9999;
+  }
+}
+
 /* ---- MOBILE: stack vertically, cards full width ---- */
 @media (max-width: 899px) {
   .main-dashboard-row {
