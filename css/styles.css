@@ -903,6 +903,13 @@ html[dir="rtl"] .welcome-info-box {
     border-radius: 12px !important;
   }
 
+  /* Remove the card-style background from the countdown on mobile — let the hilal float freely */
+  .countdown-section {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
   /* Prayer name scales with screen width */
   .card-content .prayer-name {
     font-size: clamp(1.4rem, 6vw, 2.2rem) !important;
