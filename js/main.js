@@ -912,7 +912,10 @@ class NoorApp {
         const popup = document.getElementById('zekr-popup');
         if (!popup) return;
         popup.classList.remove('hidden');
-        setTimeout(() => popup.classList.add('hidden'), 3000);
+        setTimeout(() => {
+            popup.classList.add('hidden');
+            this.closeAzkarReader();
+        }, 3000);
     }
 
     closeAzkarReader() {

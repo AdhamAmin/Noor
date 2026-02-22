@@ -963,10 +963,10 @@ html[dir="rtl"] .welcome-info-box {
     font-size: clamp(0.7rem, 2.5vw, 0.95rem) !important;
   }
 
-  /* App container — fluid side padding and pull content up 120px */
+  /* App container — fluid side padding and pull content up 60px */
   .app-container {
     padding: clamp(0.75rem, 3vw, 1.5rem);
-    margin-top: -120px;
+    margin-top: -60px;
   }
 
   /* Visibility Toggles */
