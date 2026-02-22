@@ -24,8 +24,30 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
-    // Try network first, then cache (good for APIs that might change, but standard offline support)
+    // We only want to handle GET requests
+    if (event.request.method !== 'GET') return;
+
     event.respondWith(
-        fetch(event.request).catch(() => caches.match(event.request))
+        fetch(event.request)
+            .then(networkResponse => {
+                // If we get a valid response, clone it and put it in the cache
+                if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic' || networkResponse.type === 'cors') {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, responseToCache);
+                    });
+                }
+                return networkResponse;
+            })
+            .catch(() => {
+                // If network fails (Offline), try to serve from cache
+                return caches.match(event.request).then(cachedResponse => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    // If we don't have it in cache, we can't do much (could return an offline page here if we had one)
+                    console.warn('Offline and resource not in cache:', event.request.url);
+                });
+            })
     );
 });

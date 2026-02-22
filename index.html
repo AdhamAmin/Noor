@@ -464,7 +464,7 @@
       document.getElementById('pwa-install-group').style.display = 'block';
     }
 
-    document.getElementById('install-app-btn').addEventListener('click', async () => {
+    const handleInstallClick = async () => {
       if (deferredPrompt) {
         // Show the install prompt
         deferredPrompt.prompt();
@@ -473,12 +473,17 @@
         if (outcome === 'accepted') {
           console.log('User accepted the install prompt');
           document.getElementById('pwa-install-group').style.display = 'none';
+          document.getElementById('install-modal').classList.add('hidden');
         }
         deferredPrompt = null;
       } else if (isIos()) {
         alert("To install Noor on iOS: Tap the 'Share' button at the bottom of Safari, then scroll down and tap 'Add to Home Screen'.");
       }
-    });
+    };
+
+    document.getElementById('install-app-btn').addEventListener('click', handleInstallClick);
+    const installModalBtn = document.getElementById('install-modal-btn');
+    if (installModalBtn) installModalBtn.addEventListener('click', handleInstallClick);
   </script>
 
   <!-- App Core Scripts -->
