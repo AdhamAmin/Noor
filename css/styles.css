@@ -887,22 +887,6 @@ html[dir="rtl"] .welcome-info-box {
 
 /* ---- MOBILE BACKGROUND IMAGE ---- */
 @media (max-width: 899px) {
-  body {
-    background-image: url('../assets/mobile-bg.png');
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-  }
-
-  /* Tint overlay so the image blends nicely with the dark UI */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(3, 7, 18, 0.45);
-    z-index: 0;
-    pointer-events: none;
-  }
 
   /* Particles canvas stays on top of the tint overlay */
   #particles-canvas {
