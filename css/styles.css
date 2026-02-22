@@ -892,9 +892,6 @@ html[dir="rtl"] .welcome-info-box {
     background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    /* Keep gradient as overlay so text stays readable */
-    background-blend-mode: normal;
   }
 
   /* Tint overlay so the image blends nicely with the dark UI */
