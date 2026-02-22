@@ -888,7 +888,7 @@ html[dir="rtl"] .welcome-info-box {
 /* ---- MOBILE BACKGROUND IMAGE ---- */
 @media (max-width: 899px) {
   body {
-    background-image: url('../assets/mobile-bg.jpg');
+    background-image: url('../assets/mobile-bg.png');
     background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
