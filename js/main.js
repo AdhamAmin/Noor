@@ -513,10 +513,10 @@ class NoorApp {
         if (surahs.length > 0) {
             container.classList.add('grid-list');
             container.innerHTML = surahs.map(s => `
-        <div class="grid-card" style="cursor:pointer;" onclick="window.app.readSurah(${s.number}, '${s.name.replace(/'/g, "\\'")}')">
+        <div class="grid-card" style="cursor:pointer;" onclick="window.app.readSurah(${s.number}, '${this.escapeHTML(s.name.replace(/'/g, "\\'"))}')">
           <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.4rem;">${s.number}</div>
-          <div class="row-time" style="font-family: var(--font-arabic); font-size: 1.4rem; margin-bottom: 0.25rem; color: var(--accent-color);">${s.name}</div>
-          <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${s.englishName}</div>
+          <div class="row-time" style="font-family: var(--font-arabic); font-size: 1.4rem; margin-bottom: 0.25rem; color: var(--accent-color);">${this.escapeHTML(s.name)}</div>
+          <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${this.escapeHTML(s.englishName)}</div>
         </div>
       `).join('');
             container.dataset.loaded = 'true';
@@ -553,6 +553,8 @@ class NoorApp {
             this.currentSurahAudioList = surah.ayahs.map(a => a.audio);
             this.currentAyahIndex = 0;
 
+            // Escape variables for XSS protection
+            const escapedSurahName = this.escapeHTML(surah.name);
             const bismillah = (id === 1 || id === 9) ? '' : 'بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
 
             // RTL means Next Surah (Id+1) goes to the Left side arrow, Previous (Id-1) goes to Right side arrow historically in mus'hafs
@@ -566,8 +568,8 @@ class NoorApp {
             let jumpToBookmarkBtn = '';
             if (hasBookmarkHere) {
                 jumpToBookmarkBtn = `<button class="theme-btn" onclick="window.app.playAyah(${savedBookmark.ayahIndex}, true)" style="display: flex; align-items: center; gap: 0.5rem; background: var(--card-bg); color: var(--accent-color); font-size: 0.8rem; padding: 0.5rem 1rem;">
-                <span class="material-symbols-rounded" style="font-size: 1.2rem;">bookmark</span> Go to Saved Ayah
-             </button>`;
+            <span class="material-symbols-rounded" style="font-size: 1.2rem;">bookmark</span> Go to Saved Ayah
+            </button>`;
             }
 
             reader.innerHTML = `
@@ -580,7 +582,7 @@ class NoorApp {
                    <span class="material-symbols-rounded">play_circle</span> <span class="hide-mobile-text">Play</span>
                 </button>
                 <select id="reciter-select" class="custom-select" style="max-width: 120px; text-overflow: ellipsis; padding: 0.5rem;" onchange="window.app.changeReciter(${id}, this.value)">
-                    ${this.reciters.map(r => `<option value="${r.identifier}" ${r.identifier === defaultReciter.identifier ? 'selected' : ''}>${r.englishName}</option>`).join('')}
+                    ${this.reciters.map(r => `<option value="${r.identifier}" ${r.identifier === defaultReciter.identifier ? 'selected' : ''}>${this.escapeHTML(r.englishName)}</option>`).join('')}
                 </select>
             </div>
 
@@ -597,7 +599,7 @@ class NoorApp {
             </div>
         </div>
         
-        <h3 style="text-align:center; font-family: var(--font-arabic); font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;">${surah.name}</h3>
+        <h3 style="text-align:center; font-family: var(--font-arabic); font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;">${escapedSurahName}</h3>
         ${bismillah ? `<p style="text-align:center; font-family: var(--font-arabic); font-size: 2rem; margin-bottom: 2rem;">${bismillah}</p>` : ''}
         <div style="font-family: var(--font-arabic); font-size: 1.8rem; line-height: 2.5; text-align: justify; direction: rtl;" id="quran-text-container">
           ${surah.ayahs.map((a, idx) => `<span id="ayah-${idx}" style="transition: color 0.3s; cursor: pointer;" onclick="window.app.playAyah(${idx}, !window.app.quranAudio.paused)">${a.text.replace('بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ', '')} <span style="color:var(--accent-color); margin: 0 5px;">﴿${this.toArabicNumerals(a.numberInSurah)}﴾</span></span>`).join(' ')}
@@ -707,8 +709,8 @@ class NoorApp {
             const categories = Object.keys(azkar);
             container.classList.add('grid-list');
             container.innerHTML = categories.map(cat => `
-         <div class="grid-card" style="cursor:pointer;" onclick="window.app.readAzkar('${cat.replace(/'/g, "\\'")}')">
-            <span class="row-name" style="font-family: var(--font-arabic); font-size: 1.4rem; color: var(--text-primary);">${cat}</span>
+         <div class="grid-card" style="cursor:pointer;" onclick="window.app.readAzkar('${this.escapeHTML(cat.replace(/'/g, "\\'"))}')">
+            <span class="row-name" style="font-family: var(--font-arabic); font-size: 1.4rem; color: var(--text-primary);">${this.escapeHTML(cat)}</span>
          </div>
        `).join('');
             container.dataset.loaded = 'true';
@@ -719,6 +721,15 @@ class NoorApp {
         } else {
             container.innerHTML = 'Failed to load Azkar.';
         }
+    }
+
+    escapeHTML(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     cleanAzkarText(text) {
@@ -755,7 +766,8 @@ class NoorApp {
         // Final safety: if result has no Arabic chars, return empty
         if (!/[\u0600-\u06FF]/.test(str)) return '';
 
-        return str;
+        // Escape HTML to improve security against XSS
+        return this.escapeHTML(str);
     }
 
 
@@ -826,7 +838,7 @@ class NoorApp {
                 <span class="hide-mobile-text">${isArabic ? 'رجوع' : 'Back'}</span>
             </button>
             <h3 style="text-align:center; font-family: var(--font-arabic); font-size: 1.8rem;
-                       color: var(--accent-color); margin-bottom: 1rem;">${category}</h3>
+                       color: var(--accent-color); margin-bottom: 1rem;">${this.escapeHTML(category)}</h3>
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 ${cardsHtml}
             </div>

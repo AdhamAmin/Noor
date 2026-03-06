@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Noor Prayer</title>
   <meta name="description" content="A meaningful spiritual digital experience for prayer times.">
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' data: gap: 'unsafe-eval' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com data:; media-src * blob: data:; img-src 'self' data: content: blob:; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://api.bigdatacloud.net https://raw.githubusercontent.com https://cdn.islamic.network https://verses.quran.com https://download.quranicaudio.com;">
   <!-- Progressive Web App Data -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#d4af37">
@@ -185,7 +188,9 @@
         <div class="dashboard-left">
           <section class="doaa-card">
             <h3 id="doaa-title-label" class="label">Daily Doaa</h3>
-            <p id="doaa-snippet" class="doaa-text" style="font-family: var(--font-arabic);">Loading...</p>
+            <p id="doaa-snippet" class="doaa-text"
+              style="font-family: var(--font-arabic); font-size: 1.1rem; line-height: 1.6; padding-top: 0.5rem;">
+              Loading...</p>
           </section>
         </div>
 
@@ -248,7 +253,7 @@
       <header class="app-header mb-2">
         <h2 id="quran-page-title">Quran</h2>
       </header>
-      <div class="quran-container">
+      <div class="quran-container" style="position: relative; z-index: 10;">
         <!-- Surah list or reader injected here -->
         <div id="quran-list">Loading Surahs...</div>
         <div id="quran-reader" class="hidden"></div>

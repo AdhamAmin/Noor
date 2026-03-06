@@ -316,6 +316,8 @@ html[dir="rtl"] .welcome-info-box {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
+  /* Ensure top bar doesn't shrink when mobile elements grow */
 }
 
 .location-container {
@@ -874,8 +876,11 @@ html[dir="rtl"] .welcome-info-box {
   flex-direction: column;
   gap: 1.5rem;
   flex-grow: 1;
+  position: relative;
+  /* for overlap */
 }
 
+/* overlapping containers */
 .dashboard-left,
 .dashboard-center,
 .dashboard-right {
@@ -883,6 +888,13 @@ html[dir="rtl"] .welcome-info-box {
   flex-direction: column;
   gap: 1rem;
   width: 100%;
+  position: relative;
+  z-index: 5;
+}
+
+.dashboard-center {
+  z-index: 10;
+  /* center container overlaps */
 }
 
 /* ---- MOBILE BACKGROUND IMAGE ---- */
@@ -925,8 +937,10 @@ html[dir="rtl"] .welcome-info-box {
 
   /* Next prayer card — compact on mobile */
   .next-prayer-card {
-    padding: 0.4rem 1rem !important;
+    padding: 1.5rem 1rem !important;
     border-radius: 12px !important;
+    min-height: 90px;
+    /* Larger height on mobile */
   }
 
   /* Show countdown on mobile — hide only the dark backdrop circle, keep the gold arc */
@@ -935,6 +949,10 @@ html[dir="rtl"] .welcome-info-box {
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
+    margin-top: -0.5rem !important;
+    /* overlap the prayer card on mobile, but don't push up too aggressively */
+    position: relative;
+    z-index: 15;
   }
 
   .progress-ring__backdrop {
@@ -943,16 +961,27 @@ html[dir="rtl"] .welcome-info-box {
 
   /* Doaa card — compact on mobile */
   .doaa-card {
-    padding: 0.4rem 0.75rem !important;
+    padding: 1.5rem 0.75rem !important;
+    min-height: 140px;
+    /* Larger height on mobile */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   /* Prayer list rows — compact on mobile */
   .today-prayers-side {
-    padding: 0.3rem 0.5rem !important;
+    padding: 1rem 0.5rem !important;
+    min-height: 200px;
+    /* Larger height on mobile */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .prayer-row {
-    padding: 0.2rem 0.75rem !important;
+    padding: 0.6rem 0.75rem !important;
+    /* increased padding for each row */
   }
 
   /* Prayer name scales with screen width */
@@ -1001,10 +1030,17 @@ html[dir="rtl"] .welcome-info-box {
     font-size: clamp(0.65rem, 2.2vw, 0.9rem) !important;
   }
 
-  /* App container — lower content slightly */
+  /* App container — raise content to top on mobile */
   .app-container {
     padding: clamp(0.5rem, 2vw, 1rem);
-    margin-top: -80px;
+    margin-top: -140px;
+  }
+
+  /* Adjust Header Height and Spacing on Mobile */
+  .app-header {
+    min-height: 90px;
+    margin-bottom: 1rem !important;
+    /* Force a larger gap below the header so the countdown clears it completely */
   }
 
   /* Visibility Toggles */
@@ -1051,10 +1087,6 @@ html[dir="rtl"] .welcome-info-box {
     grid-row: 1 / 2;
     width: 100% !important;
     max-width: none !important;
-    margin: 0 !important;
-    padding: 0.5rem 3rem !important;
-    display: flex;
-    align-items: center;
   }
 
   /* Countdown — center column, second row */
