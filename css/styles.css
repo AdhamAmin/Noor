@@ -1303,6 +1303,7 @@ body.theme-light .large-clock h1 {
   z-index: 50;
   padding-bottom: env(safe-area-inset-bottom);
   /* iOS support */
+  touch-action: manipulation;
 }
 
 .nav-item {
@@ -1314,14 +1315,16 @@ body.theme-light .large-clock h1 {
   align-items: center;
   gap: 0.25rem;
   cursor: pointer;
-  transition: color var(--transition-speed);
+  /* No transition — instant response on tap */
   font-family: var(--font-family);
   width: 33%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav-item span.material-symbols-rounded {
   font-size: 1.5rem;
-  transition: transform 0.2s;
+  /* No transition on icon — snaps instantly */
 }
 
 .nav-item span:last-child {
