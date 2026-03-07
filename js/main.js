@@ -602,23 +602,28 @@ class NoorApp {
             reader.innerHTML = `
         ${prevBtn}
         ${nextBtn}
-        <div style="display:flex; align-items:center; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: nowrap;">
+
+        <!-- Pinned Header Controls (flex-shrink: 0 = never scrolls away) -->
+        <div style="flex-shrink: 0; background: var(--bg-color); border-bottom: 1px solid var(--border-color); padding: 0.75rem 1rem; display:flex; align-items:center; gap: 0.75rem; flex-wrap: nowrap;">
             <button class="theme-btn" onclick="window.app.closeSurahReader()">
                <span class="material-symbols-rounded" style="vertical-align: middle;">arrow_back</span> <span class="hide-mobile-text">Back</span>
             </button>
             ${bookmarkBtnHtml}
-            <select id="reciter-select" class="custom-select" style="flex: 1; min-width: 0; text-overflow: ellipsis;" onchange="window.app.changeReciter(${id}, this.value)">
+            <select id="reciter-select" class="custom-select" style="max-width: 130px; text-overflow: ellipsis; overflow: hidden;" onchange="window.app.changeReciter(${id}, this.value)">
                 ${this.reciters.map(r => `<option value="${r.identifier}" ${r.identifier === defaultReciter.identifier ? 'selected' : ''}>${this.escapeHTML(r.englishName)}</option>`).join('')}
             </select>
             <button class="theme-btn" id="play-quran-btn" onclick="window.app.toggleQuranAudio()">
                <span class="material-symbols-rounded" style="vertical-align: middle;">play_circle</span> <span class="hide-mobile-text">Play</span>
             </button>
         </div>
-        
-        <h3 style="text-align:center; font-family: var(--font-arabic); font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;">${escapedSurahName}</h3>
-        ${bismillah ? `<p style="text-align:center; font-family: var(--font-arabic); font-size: 2rem; margin-bottom: 2rem;">${bismillah}</p>` : ''}
-        <div style="font-family: var(--font-arabic); font-size: 1.8rem; line-height: 2.5; text-align: justify; direction: rtl;" id="quran-text-container">
-          ${surah.ayahs.map((a, idx) => `<span id="ayah-${idx}" style="transition: color 0.3s; cursor: pointer;" onclick="window.app.playAyah(${idx}, !window.app.quranAudio.paused)">${a.text.replace('بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ', '')} <span style="color:var(--accent-color); margin: 0 5px;">﴿${this.toArabicNumerals(a.numberInSurah)}﴾</span></span>`).join(' ')}
+
+        <!-- Scrollable Text Body (flex: 1 = fills remaining height) -->
+        <div style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 1.5rem 0.75rem 4rem 0.75rem;">
+            <h3 style="text-align:center; font-family: var(--font-arabic); font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;">${escapedSurahName}</h3>
+            ${bismillah ? `<p style="text-align:center; font-family: var(--font-arabic); font-size: 2rem; margin-bottom: 2rem;">${bismillah}</p>` : ''}
+            <div style="font-family: var(--font-arabic); font-size: 1.8rem; line-height: 2.5; text-align: justify; direction: rtl;" id="quran-text-container">
+              ${surah.ayahs.map((a, idx) => `<span id="ayah-${idx}" style="transition: color 0.3s; cursor: pointer;" onclick="window.app.playAyah(${idx}, !window.app.quranAudio.paused)">${a.text.replace('بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ', '')} <span style="color:var(--accent-color); margin: 0 5px;">﴿${this.toArabicNumerals(a.numberInSurah)}﴾</span></span>`).join(' ')}
+            </div>
         </div>
       `;
 

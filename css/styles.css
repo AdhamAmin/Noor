@@ -1393,8 +1393,9 @@ body.theme-light .large-clock h1 {
   height: 100dvh;
   z-index: 9999;
   background: var(--bg-color);
-  overflow-y: auto;
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 body.reading-quran {
