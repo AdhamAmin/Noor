@@ -575,7 +575,7 @@ class NoorApp {
             reader.innerHTML = `
         ${prevBtn}
         ${nextBtn}
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; position: sticky; top:0; background: var(--bg-color); padding: 1rem 0; z-index: 10;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; position: sticky; top:0; background: var(--bg-color); background-image: var(--bg-gradient); padding: 1rem 0; z-index: 10;">
             <!-- Left side controls (Play and Reciter) -->
             <div style="display:flex; align-items:center; gap: 0.5rem; flex-wrap: nowrap;">
                 <button class="theme-btn" id="play-quran-btn" onclick="window.app.toggleQuranAudio()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
