@@ -58,12 +58,31 @@ class NoorAPI {
     }
   }
 
-  async getSurah(id, edition = 'quran-uthmani') {
+  async getSurah(id, audioEdition = 'ar.alafasy') {
     try {
-      const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}/${edition}`);
-      if (!res.ok) throw new Error('Failed to fetch surah content');
-      const data = await res.json();
-      return data.data;
+      // Always fetch Arabic text from the Uthmani text edition
+      const textRes = await fetch(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
+      if (!textRes.ok) throw new Error('Failed to fetch surah text');
+      const textData = await textRes.json();
+      const surah = textData.data;
+
+      // Fetch audio URLs from the requested reciter edition
+      try {
+        const audioRes = await fetch(`https://api.alquran.cloud/v1/surah/${id}/${audioEdition}`);
+        if (audioRes.ok) {
+          const audioData = await audioRes.json();
+          const audioAyahs = audioData.data.ayahs;
+          // Merge audio URLs into the text ayahs
+          surah.ayahs = surah.ayahs.map((ayah, idx) => ({
+            ...ayah,
+            audio: audioAyahs[idx] ? audioAyahs[idx].audio : null,
+          }));
+        }
+      } catch (audioErr) {
+        console.warn('Audio fetch failed, text-only mode:', audioErr);
+      }
+
+      return surah;
     } catch (error) {
       console.error(error);
       return null;

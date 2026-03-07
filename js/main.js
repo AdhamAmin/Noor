@@ -317,9 +317,11 @@ class NoorApp {
 
         for (const p of this.targetPrayers) {
             if (rawTimings[p]) {
-                // Extracts the time part "05:02" from "2026-02-22T05:02:00+02:00" safely 
-                const timePart = rawTimings[p].split('T')[1].substring(0, 5);
+                // Handle both bare "HH:MM" and ISO "2026-02-22T05:02:00+02:00" formats
+                const raw = rawTimings[p];
+                const timePart = raw.includes('T') ? raw.split('T')[1].substring(0, 5) : raw.substring(0, 5);
                 const [hours, minutes] = timePart.split(':').map(Number);
+                if (isNaN(hours) || isNaN(minutes)) continue;
                 const prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
 
                 this.timings.push({
@@ -485,6 +487,16 @@ class NoorApp {
         const navItems = document.querySelectorAll('.bottom-nav .nav-item');
         const views = document.querySelectorAll('.app-container .view');
 
+        // Prime adhan audio on first user gesture to satisfy browser autoplay policy
+        const primeAdhan = () => {
+            this.adhanAudio.src = this.api.adhanUrl;
+            this.adhanAudio.load();
+            document.removeEventListener('touchstart', primeAdhan);
+            document.removeEventListener('click', primeAdhan);
+        };
+        document.addEventListener('touchstart', primeAdhan, { once: true });
+        document.addEventListener('click', primeAdhan, { once: true });
+
         navItems.forEach(btn => {
             btn.addEventListener('click', () => {
                 navItems.forEach(b => b.classList.remove('active'));
@@ -496,6 +508,10 @@ class NoorApp {
                 const targetView = document.getElementById(targetId);
                 targetView.classList.remove('hidden');
                 targetView.classList.add('active');
+
+                // Scroll to top when switching tabs
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                targetView.scrollTop = 0;
 
                 if (targetId === 'view-quran') this.loadQuranData();
                 if (targetId === 'view-azkar') this.loadAzkarData();
@@ -538,6 +554,13 @@ class NoorApp {
         document.body.classList.add('reading-quran');
         document.getElementById('app-content').classList.add('quran-reader-active');
 
+        const quranTitle = document.getElementById('quran-page-title');
+        if (quranTitle) quranTitle.parentElement.classList.add('hidden');
+
+        // Scroll reader to top
+        reader.scrollTop = 0;
+        window.scrollTo({ top: 0, behavior: 'instant' });
+
         reader.innerHTML = `<h3 style="text-align:center;">Loading Text...</h3>`;
 
         // Fetch reciters if not already fetched
@@ -565,17 +588,21 @@ class NoorApp {
             const savedBookmark = JSON.parse(localStorage.getItem('noor_quran_bookmark') || 'null');
             const hasBookmarkHere = savedBookmark && savedBookmark.surahId === id;
 
-            let jumpToBookmarkBtn = '';
+            let bookmarkBtnHtml = '';
             if (hasBookmarkHere) {
-                jumpToBookmarkBtn = `<button class="theme-btn" onclick="window.app.playAyah(${savedBookmark.ayahIndex}, true)" style="display: flex; align-items: center; gap: 0.5rem; background: var(--card-bg); color: var(--accent-color); font-size: 0.8rem; padding: 0.5rem 1rem;">
-            <span class="material-symbols-rounded" style="font-size: 1.2rem;">bookmark</span> Go to Saved Ayah
-            </button>`;
+                bookmarkBtnHtml = `<button id="bookmark-btn" class="theme-btn" onclick="window.app.handleBookmarkAction(${id})" title="Go to saved ayah" style="display: flex; align-items: center; gap: 0.4rem; background: var(--card-bg); color: var(--accent-color); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--accent-color); border-radius: 12px; transition: all 0.3s ease;">
+                   <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark</span> <span>Go to saved</span>
+                </button>`;
+            } else {
+                bookmarkBtnHtml = `<button id="bookmark-btn" class="theme-btn" onclick="window.app.handleBookmarkAction(${id})" title="Bookmark current Ayah" style="display: flex; align-items: center; gap: 0.4rem; background: var(--card-bg); color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--card-border); border-radius: 12px; transition: all 0.3s ease;">
+                   <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark_add</span>
+                </button>`;
             }
 
             reader.innerHTML = `
         ${prevBtn}
         ${nextBtn}
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; position: sticky; top:0; background: var(--bg-color); background-image: var(--bg-gradient); padding: 1rem 0; z-index: 10;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; position: sticky; top:0; padding: 1rem 0; z-index: 10;">
             <!-- Left side controls (Play and Reciter) -->
             <div style="display:flex; align-items:center; gap: 0.5rem; flex-wrap: nowrap;">
                 <button class="theme-btn" id="play-quran-btn" onclick="window.app.toggleQuranAudio()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
@@ -588,10 +615,7 @@ class NoorApp {
 
             <!-- Right Side controls (Bookmark, Jump, and Back) -->
             <div style="display:flex; align-items:center; gap: 1rem;">
-                ${jumpToBookmarkBtn}
-                <button id="bookmark-btn" class="icon-btn" onclick="window.app.saveBookmark(${id})" title="Bookmark current Ayah" style="color: var(--text-secondary);">
-                   <span class="material-symbols-rounded">bookmark_add</span>
-                </button>
+                ${bookmarkBtnHtml}
                 <div style="width: 1px; height: 24px; background: var(--border-color); opacity: 0.5;"></div>
                 <button class="theme-btn" onclick="window.app.closeSurahReader()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
                    <span class="material-symbols-rounded">arrow_back</span> <span class="hide-mobile-text">Back</span>
@@ -668,23 +692,38 @@ class NoorApp {
         }
     }
 
-    saveBookmark(surahId) {
-        if (this.currentAyahIndex >= 0) {
-            const bookmarkData = {
-                surahId: surahId,
-                ayahIndex: this.currentAyahIndex
-            };
-            localStorage.setItem('noor_quran_bookmark', JSON.stringify(bookmarkData));
+    handleBookmarkAction(surahId) {
+        const btn = document.getElementById('bookmark-btn');
+        if (!btn) return;
 
-            // Visual feedback
-            const bookmarkBtn = document.getElementById('bookmark-btn');
-            if (bookmarkBtn) {
-                bookmarkBtn.style.color = 'var(--accent-color)';
-                bookmarkBtn.innerHTML = '<span class="material-symbols-rounded">bookmark_added</span>';
-                setTimeout(() => {
-                    bookmarkBtn.style.color = 'var(--text-secondary)';
-                    bookmarkBtn.innerHTML = '<span class="material-symbols-rounded">bookmark_add</span>';
-                }, 2000);
+        // If the button is currently saying "Go to saved", it means it's ready to jump
+        const isGoToMode = btn.innerText.includes('Go to saved') || btn.innerText.includes('Go to Saved');
+
+        if (isGoToMode) {
+            const savedBookmark = JSON.parse(localStorage.getItem('noor_quran_bookmark') || 'null');
+            if (savedBookmark && savedBookmark.surahId === surahId) {
+                this.playAyah(savedBookmark.ayahIndex, false);
+
+                // Switch back to "Save" icon so they can update their bookmark later!
+                btn.className = 'theme-btn';
+                btn.style.cssText = 'display: flex; align-items: center; gap: 0.4rem; background: var(--card-bg); color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--card-border); border-radius: 12px; transition: all 0.3s ease;';
+                btn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark_add</span>';
+                btn.title = "Bookmark current Ayah";
+            }
+        } else {
+            // Save the current ayah index
+            if (this.currentAyahIndex >= 0) {
+                const bookmarkData = {
+                    surahId: surahId,
+                    ayahIndex: this.currentAyahIndex
+                };
+                localStorage.setItem('noor_quran_bookmark', JSON.stringify(bookmarkData));
+
+                // Change button to yellow expanded "Go to saved" state
+                btn.className = 'theme-btn';
+                btn.style.cssText = 'display: flex; align-items: center; gap: 0.4rem; background: var(--card-bg); color: var(--accent-color); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--accent-color); border-radius: 12px; transition: all 0.3s ease;';
+                btn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark</span> <span>Go to saved</span>';
+                btn.title = "Go to saved ayah";
             }
         }
     }
@@ -693,9 +732,17 @@ class NoorApp {
         this.quranAudio.pause();
         this.quranAudio.src = '';
         document.getElementById('quran-reader').classList.add('hidden');
-        document.getElementById('quran-list').classList.remove('hidden');
+        const list = document.getElementById('quran-list');
+        list.classList.remove('hidden');
         document.body.classList.remove('reading-quran');
         document.getElementById('app-content').classList.remove('quran-reader-active');
+
+        const quranTitle = document.getElementById('quran-page-title');
+        if (quranTitle) quranTitle.parentElement.classList.remove('hidden');
+
+        // Scroll back to top of surah list
+        list.scrollTop = 0;
+        window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     // --- AZKAR LOGIC ---
@@ -934,7 +981,11 @@ class NoorApp {
 
     closeAzkarReader() {
         document.getElementById('azkar-reader').classList.add('hidden');
-        document.getElementById('azkar-categories').classList.remove('hidden');
+        const cats = document.getElementById('azkar-categories');
+        cats.classList.remove('hidden');
+        // Scroll back to top of category list
+        cats.scrollTop = 0;
+        window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     handleCelebration(prayerName) {
@@ -961,8 +1012,10 @@ class NoorApp {
 
     triggerMadfaaSequence() {
         const overlay = document.getElementById('madfaa-overlay');
+        if (!overlay) { console.warn('Madfaa overlay not found'); return; }
         const flash = overlay.querySelector('.madfaa-flash');
         const text = overlay.querySelector('.madfaa-text');
+        if (!flash || !text) return;
 
         // Reset any previous animation state so it can replay cleanly
         flash.classList.remove('fire');

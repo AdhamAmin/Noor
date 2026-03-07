@@ -22,13 +22,14 @@
 | ⏱️ **Live Countdown** | Animated circular countdown to the next prayer |
 | 📖 **Quran Reader** | Full Quran with Arabic text, Surah navigation, and audio playback |
 | 🎙️ **Reciter Selection** | Choose between multiple Quranic reciters (Shuyukh) |
-| 🔖 **Ayah Bookmarks** | Save and jump back to your last-read Ayah |
+| 🔖 **Ayah Bookmarks** | Single smart bookmark icon — turns gold and expands to "Go to saved" when set |
 | 📿 **Interactive Azkar** | Tap-to-decrement counter with haptics & bilingual success popup |
 | 🌐 **Bilingual UI** | Fully translated English ↔ Arabic interface |
-| 🕯️ **Ramadan Mode** | Decorative Fawanees, Zeena pennants, and Madfaa cannon |
+| 🕯️ **Ramadan Mode** | Decorative Fawanees, Zeena pennants, and Madfaa cannon at Maghrib |
 | 🔔 **Adhan Playback** | Auto-plays Adhan audio when prayer time is reached |
 | 📱 **PWA / Installable** | Install as a standalone app on iOS, Android, and Desktop |
 | 🌓 **Multiple Themes** | Dark, Light, and Ramadan themes |
+| 📵 **Mobile Stars BG** | On phones, the Surah reader shows only ambient stars & crescent |
 
 ---
 
@@ -157,6 +158,15 @@ On mobile (Chrome/Safari):
 | 🌑 **Dark** (default) | Deep navy gradient with gold accents |
 | ✨ **Ramadan** | Same dark palette + Fawanees, Zeena flags, and Madfaa cannon at Maghrib |
 | 🌤️ **Light** | Softer contrast version for daytime reading |
+
+---
+
+## 🔒 Security
+
+The app enforces a strict **Content-Security-Policy** that:
+- Disallows `eval()` and dynamic code execution
+- Whitelists only the specific CDNs used for audio, fonts, and APIs
+- Prevents loading scripts, styles, or media from unknown origins
 
 ---
 
