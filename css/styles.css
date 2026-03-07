@@ -150,6 +150,29 @@ body {
   transition: opacity 0.5s ease;
 }
 
+.view {
+  display: none;
+  opacity: 0;
+}
+
+.view.active {
+  display: block;
+  opacity: 1;
+  animation: viewFadeIn 0.15s ease-out forwards;
+}
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .logo-container {
   text-align: center;
   margin-bottom: 2rem;
@@ -1369,6 +1392,7 @@ body.theme-light .large-clock h1 {
   height: 100vh;
   height: 100dvh;
   z-index: 9999;
+  background: var(--bg-color);
   overflow-y: auto;
   padding: 2rem;
 }
@@ -1454,6 +1478,23 @@ body.theme-ramadan::after {
   pointer-events: none;
   z-index: 1;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.reading-quran.theme-ramadan::after {
+  display: none !important;
+}
+
+.surah-header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+  background: transparent;
 }
 
 /* ---------------
@@ -1475,6 +1516,10 @@ body.theme-ramadan::after {
 /* Only show in ramadan theme */
 body.theme-ramadan .ramadan-decorations {
   display: block;
+}
+
+body.reading-quran.theme-ramadan .ramadan-decorations {
+  display: none !important;
 }
 
 .zeena-pennants {

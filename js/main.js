@@ -42,9 +42,11 @@ class NoorApp {
             console.warn("Location access denied or failed, using default (Cairo).");
         }
 
-        await this.loadData();
-        this.checkWelcomeFlow();
+        // Hide splash early — data loads in background, UI feels instant
         this.hideSplash();
+        this.checkWelcomeFlow();
+
+        await this.loadData();
     }
 
     requestNotificationPermission() {
@@ -552,8 +554,6 @@ class NoorApp {
         list.classList.add('hidden');
         reader.classList.remove('hidden');
         document.body.classList.add('reading-quran');
-        document.getElementById('app-content').classList.add('quran-reader-active');
-
         const quranTitle = document.getElementById('quran-page-title');
         if (quranTitle) quranTitle.parentElement.classList.add('hidden');
 
@@ -590,11 +590,11 @@ class NoorApp {
 
             let bookmarkBtnHtml = '';
             if (hasBookmarkHere) {
-                bookmarkBtnHtml = `<button id="bookmark-btn" class="theme-btn" onclick="window.app.handleBookmarkAction(${id})" title="Go to saved ayah" style="display: flex; align-items: center; gap: 0.4rem; background: var(--card-bg); color: var(--accent-color); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--accent-color); border-radius: 12px; transition: all 0.3s ease;">
+                bookmarkBtnHtml = `<button id="bookmark-btn" class="theme-btn" onclick="window.app.handleBookmarkAction(${id})" title="Go to saved ayah" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: var(--card-bg); color: var(--accent-color); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--accent-color); border-radius: 12px; min-height: 38px; white-space: nowrap; transition: all 0.3s ease;">
                    <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark</span> <span>Go to saved</span>
                 </button>`;
             } else {
-                bookmarkBtnHtml = `<button id="bookmark-btn" class="theme-btn" onclick="window.app.handleBookmarkAction(${id})" title="Bookmark current Ayah" style="display: flex; align-items: center; gap: 0.4rem; background: var(--card-bg); color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--card-border); border-radius: 12px; transition: all 0.3s ease;">
+                bookmarkBtnHtml = `<button id="bookmark-btn" class="theme-btn" onclick="window.app.handleBookmarkAction(${id})" title="Bookmark current Ayah" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: var(--card-bg); color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem 0.75rem; border: 1px solid var(--card-border); border-radius: 12px; min-height: 38px; white-space: nowrap; transition: all 0.3s ease;">
                    <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark_add</span>
                 </button>`;
             }
@@ -602,25 +602,17 @@ class NoorApp {
             reader.innerHTML = `
         ${prevBtn}
         ${nextBtn}
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; position: sticky; top:0; padding: 1rem 0; z-index: 10;">
-            <!-- Left side controls (Play and Reciter) -->
-            <div style="display:flex; align-items:center; gap: 0.5rem; flex-wrap: nowrap;">
-                <button class="theme-btn" id="play-quran-btn" onclick="window.app.toggleQuranAudio()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
-                   <span class="material-symbols-rounded">play_circle</span> <span class="hide-mobile-text">Play</span>
-                </button>
-                <select id="reciter-select" class="custom-select" style="max-width: 120px; text-overflow: ellipsis; padding: 0.5rem;" onchange="window.app.changeReciter(${id}, this.value)">
-                    ${this.reciters.map(r => `<option value="${r.identifier}" ${r.identifier === defaultReciter.identifier ? 'selected' : ''}>${this.escapeHTML(r.englishName)}</option>`).join('')}
-                </select>
-            </div>
-
-            <!-- Right Side controls (Bookmark, Jump, and Back) -->
-            <div style="display:flex; align-items:center; gap: 1rem;">
-                ${bookmarkBtnHtml}
-                <div style="width: 1px; height: 24px; background: var(--border-color); opacity: 0.5;"></div>
-                <button class="theme-btn" onclick="window.app.closeSurahReader()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
-                   <span class="material-symbols-rounded">arrow_back</span> <span class="hide-mobile-text">Back</span>
-                </button>
-            </div>
+        <div style="display:flex; align-items:center; gap: 0.75rem; margin-bottom: 2rem; flex-wrap: nowrap;">
+            <button class="theme-btn" onclick="window.app.closeSurahReader()">
+               <span class="material-symbols-rounded" style="vertical-align: middle;">arrow_back</span> <span class="hide-mobile-text">Back</span>
+            </button>
+            ${bookmarkBtnHtml}
+            <select id="reciter-select" class="custom-select" style="flex: 1; min-width: 0; text-overflow: ellipsis;" onchange="window.app.changeReciter(${id}, this.value)">
+                ${this.reciters.map(r => `<option value="${r.identifier}" ${r.identifier === defaultReciter.identifier ? 'selected' : ''}>${this.escapeHTML(r.englishName)}</option>`).join('')}
+            </select>
+            <button class="theme-btn" id="play-quran-btn" onclick="window.app.toggleQuranAudio()">
+               <span class="material-symbols-rounded" style="vertical-align: middle;">play_circle</span> <span class="hide-mobile-text">Play</span>
+            </button>
         </div>
         
         <h3 style="text-align:center; font-family: var(--font-arabic); font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;">${escapedSurahName}</h3>
