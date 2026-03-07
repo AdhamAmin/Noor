@@ -604,17 +604,23 @@ class NoorApp {
         ${nextBtn}
 
         <!-- Pinned Header Controls (flex-shrink: 0 = never scrolls away) -->
-        <div style="flex-shrink: 0; background: var(--bg-color); border-bottom: 1px solid var(--border-color); padding: 0.75rem 1rem; display:flex; align-items:center; gap: 0.75rem; flex-wrap: nowrap;">
-            <button class="theme-btn" onclick="window.app.closeSurahReader()">
-               <span class="material-symbols-rounded" style="vertical-align: middle;">arrow_back</span> <span class="hide-mobile-text">Back</span>
-            </button>
-            ${bookmarkBtnHtml}
-            <select id="reciter-select" class="custom-select" style="max-width: 130px; text-overflow: ellipsis; overflow: hidden;" onchange="window.app.changeReciter(${id}, this.value)">
-                ${this.reciters.map(r => `<option value="${r.identifier}" ${r.identifier === defaultReciter.identifier ? 'selected' : ''}>${this.escapeHTML(r.englishName)}</option>`).join('')}
-            </select>
-            <button class="theme-btn" id="play-quran-btn" onclick="window.app.toggleQuranAudio()">
-               <span class="material-symbols-rounded" style="vertical-align: middle;">play_circle</span> <span class="hide-mobile-text">Play</span>
-            </button>
+        <div style="flex-shrink: 0; background: var(--bg-color); border-bottom: 1px solid var(--border-color); padding: 0.75rem 1rem; display:flex; align-items:center; justify-content: space-between; gap: 0.5rem;">
+            <!-- Left: Back + Bookmark -->
+            <div style="display:flex; align-items:center; gap: 0.5rem;">
+                <button class="theme-btn" onclick="window.app.closeSurahReader()">
+                   <span class="material-symbols-rounded" style="vertical-align: middle;">arrow_back</span> <span class="hide-mobile-text">Back</span>
+                </button>
+                ${bookmarkBtnHtml}
+            </div>
+            <!-- Right: Reciter + Play -->
+            <div style="display:flex; align-items:center; gap: 0.5rem;">
+                <select id="reciter-select" class="custom-select" style="max-width: 130px; text-overflow: ellipsis; overflow: hidden;" onchange="window.app.changeReciter(${id}, this.value)">
+                    ${this.reciters.map(r => `<option value="${r.identifier}" ${r.identifier === defaultReciter.identifier ? 'selected' : ''}>${this.escapeHTML(r.englishName)}</option>`).join('')}
+                </select>
+                <button class="theme-btn" id="play-quran-btn" onclick="window.app.toggleQuranAudio()">
+                   <span class="material-symbols-rounded" style="vertical-align: middle;">play_circle</span> <span class="hide-mobile-text">Play</span>
+                </button>
+            </div>
         </div>
 
         <!-- Scrollable Text Body (flex: 1 = fills remaining height) -->
