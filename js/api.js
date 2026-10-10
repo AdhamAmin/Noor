@@ -122,10 +122,12 @@ class NoorAPI {
       }
 
       surahData.ayahs = surahData.ayahs.map((ayah, idx) => {
+        const audioItem = audioAyahs[idx];
         return {
           ...ayah,
           translation: translationAyahs[idx] ? translationAyahs[idx].text : '',
-          audio: audioAyahs[idx] ? audioAyahs[idx].audio : (ayah.audio || null)
+          audio: audioItem ? audioItem.audio : (ayah.audio || null),
+          audioSecondary: (audioItem && audioItem.audioSecondary) ? audioItem.audioSecondary : []
         };
       });
 

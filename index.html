@@ -254,24 +254,24 @@
         <!-- Multi-Tab Navigation Pills -->
         <div class="quran-tabs-nav" id="quran-tabs-container">
           <button class="quran-tab-pill active" data-quran-tab="surahs">
-            <span class="material-symbols-rounded" style="font-size: 1.1rem;">format_list_bulleted</span>
-            <span>السور (١١٤)</span>
+            <span class="material-symbols-rounded" style="font-size: 1.15rem;">format_list_bulleted</span>
+            <span class="tab-label">الكل (١١٤)</span>
           </button>
           <button class="quran-tab-pill" data-quran-tab="juz">
-            <span class="material-symbols-rounded" style="font-size: 1.1rem;">auto_stories</span>
-            <span>الأجزاء (٣٠)</span>
+            <span class="material-symbols-rounded" style="font-size: 1.15rem;">auto_stories</span>
+            <span class="tab-label">الأجزاء (٣٠)</span>
           </button>
           <button class="quran-tab-pill" data-quran-tab="hizb">
-            <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark_border</span>
-            <span>الأحزاب (٦٠)</span>
+            <span class="material-symbols-rounded" style="font-size: 1.15rem;">bookmark_border</span>
+            <span class="tab-label">الأحزاب (٦٠)</span>
           </button>
           <button class="quran-tab-pill" data-quran-tab="pages">
-            <span class="material-symbols-rounded" style="font-size: 1.1rem;">menu_book</span>
-            <span>الصفحات (٦٠٤)</span>
+            <span class="material-symbols-rounded" style="font-size: 1.15rem;">menu_book</span>
+            <span class="tab-label">الصفحات (٦٠٤)</span>
           </button>
           <button class="quran-tab-pill" data-quran-tab="bookmarks">
-            <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmarks</span>
-            <span>الفواصل والمفضلة</span>
+            <span class="material-symbols-rounded" style="font-size: 1.15rem;">bookmarks</span>
+            <span class="tab-label">الفواصل والمفضلة</span>
           </button>
         </div>
 
@@ -548,15 +548,50 @@
 
     <!-- Reader Audio Control Dock -->
     <div class="reader-audio-dock" id="reader-audio-dock">
-      <!-- Progress Bar -->
-      <div class="audio-progress-bar" id="reader-audio-progress-bar">
-        <div class="audio-progress-bar-fill" id="reader-audio-progress-fill"></div>
+      <!-- Top Audio Meta Row: Ayah Info, Time, Repeat & Collapse -->
+      <div class="audio-dock-meta-row">
+        <div class="audio-dock-info">
+          <span class="audio-ayah-badge" id="reader-audio-ayah-badge">الآية ١</span>
+          <span class="audio-surah-title" id="reader-audio-surah-title">سورة الفاتحة</span>
+        </div>
+
+        <div class="audio-dock-meta-actions">
+          <!-- Time elapsed / duration -->
+          <div class="audio-time-display">
+            <span id="reader-audio-time-current">00:00</span>
+            <span class="time-divider">/</span>
+            <span id="reader-audio-time-total">00:00</span>
+          </div>
+
+          <!-- Repeat Ayah Toggle Button -->
+          <button class="icon-btn-dock" id="reader-repeat-ayah-btn" title="تكرار الآية الحالية">
+            <span class="material-symbols-rounded">repeat</span>
+          </button>
+
+          <!-- Auto-scroll toggle -->
+          <button class="icon-btn-dock is-active" id="reader-autoscroll-btn" title="التمرير التلقائي مع القراءة">
+            <span class="material-symbols-rounded">vertical_align_center</span>
+          </button>
+
+          <!-- Collapse Audio Dock button -->
+          <button class="icon-btn-dock" id="collapse-reader-audio-dock-btn" title="تصغير المشغل الصوتي">
+            <span class="material-symbols-rounded">expand_more</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Progress Bar Container -->
+      <div class="audio-progress-container" id="reader-audio-progress-container" title="تقديم / تأخير التلاوة">
+        <div class="audio-progress-bar" id="reader-audio-progress-bar">
+          <div class="audio-progress-bar-fill" id="reader-audio-progress-fill"></div>
+        </div>
       </div>
 
       <div class="audio-dock-row">
         <!-- Reciter Selector -->
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <select id="reader-reciter-select" class="custom-select" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; width: 170px;">
+        <div class="audio-reciter-wrap">
+          <span class="material-symbols-rounded reciter-mic-icon">mic</span>
+          <select id="reader-reciter-select" class="custom-select audio-reciter-select">
             <!-- Populated via QURAN_DATA.RECITERS -->
           </select>
         </div>
@@ -566,19 +601,25 @@
           <button class="icon-btn" id="reader-prev-ayah-btn" title="الآية السابقة">
             <span class="material-symbols-rounded">skip_next</span>
           </button>
+          <button class="icon-btn-dock" id="reader-rewind-btn" title="رجوع ٥ ثوانٍ">
+            <span class="material-symbols-rounded">replay_5</span>
+          </button>
           <button class="play-btn-circle" id="reader-play-pause-btn" title="تشغيل / إيقاف">
             <span class="material-symbols-rounded" style="font-size: 2rem;">play_arrow</span>
+          </button>
+          <button class="icon-btn-dock" id="reader-forward-btn" title="تقديم ٥ ثوانٍ">
+            <span class="material-symbols-rounded">forward_5</span>
           </button>
           <button class="icon-btn" id="reader-next-ayah-btn" title="الآية التالية">
             <span class="material-symbols-rounded">skip_previous</span>
           </button>
         </div>
 
-        <!-- Speed & Collapse -->
-        <div style="display: flex; align-items: center; gap: 0.4rem;">
-          <button class="glass-pill" id="reader-speed-btn" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">1.0x</button>
-          <button class="icon-btn" id="collapse-reader-audio-dock-btn" title="تصغير المشغل الصوتي">
-            <span class="material-symbols-rounded">expand_more</span>
+        <!-- Speed & Mute Options -->
+        <div class="audio-dock-options">
+          <button class="glass-pill" id="reader-speed-btn" title="سرعة التلاوة">1.0x</button>
+          <button class="icon-btn" id="reader-mute-btn" title="كتم / تشغيل الصوت">
+            <span class="material-symbols-rounded" id="reader-mute-icon">volume_up</span>
           </button>
         </div>
       </div>

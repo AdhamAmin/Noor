@@ -1,4 +1,4 @@
-const CACHE_NAME = 'noor-cache-v5';
+const CACHE_NAME = 'noor-cache-v8';
 const urlsToCache = [
     './',
     './index.html',

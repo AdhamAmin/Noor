@@ -45,6 +45,8 @@ class NoorApp {
     this.audioPlayer = new Audio();
     this.adhanPlayer = new Audio();
     this.audioProgressInterval = null;
+    this.isAyahRepeatActive = false;
+    this.isAutoScrollEnabled = true;
 
     // Masbaha Audio Synthesizer
     this.audioCtx = null;
@@ -89,6 +91,7 @@ class NoorApp {
     this.renderQuranAhzab();
     this.renderQuranPages();
     this.renderBookmarks();
+    this.updateQuranHubUI();
     this.initTasbeeh();
 
     // Load location and live prayer data
@@ -505,6 +508,7 @@ class NoorApp {
   bindQuranHubEvents() {
     // Tabs Navigation Pills
     const tabPills = document.querySelectorAll('.quran-tab-pill');
+    const filterChipsRow = document.getElementById('surah-filter-chips');
     tabPills.forEach(pill => {
       pill.addEventListener('click', () => {
         tabPills.forEach(p => p.classList.remove('active'));
@@ -515,6 +519,11 @@ class NoorApp {
 
         const activeContent = document.getElementById(`quran-tab-${targetTab}`);
         if (activeContent) activeContent.classList.remove('hidden');
+
+        // Only display surah category filter chips when browsing surahs
+        if (filterChipsRow) {
+          filterChipsRow.style.display = targetTab === 'surahs' ? 'flex' : 'none';
+        }
       });
     });
 
@@ -549,6 +558,40 @@ class NoorApp {
     }
   }
 
+  updateQuranHubUI() {
+    const isAr = this.isArabic();
+
+    // Tab Labels
+    const tabSurahs = document.querySelector('.quran-tab-pill[data-quran-tab="surahs"] .tab-label');
+    const tabJuz = document.querySelector('.quran-tab-pill[data-quran-tab="juz"] .tab-label');
+    const tabHizb = document.querySelector('.quran-tab-pill[data-quran-tab="hizb"] .tab-label');
+    const tabPages = document.querySelector('.quran-tab-pill[data-quran-tab="pages"] .tab-label');
+    const tabBookmarks = document.querySelector('.quran-tab-pill[data-quran-tab="bookmarks"] .tab-label');
+
+    if (tabSurahs) tabSurahs.textContent = isAr ? 'الكل (١١٤)' : 'All (114)';
+    if (tabJuz) tabJuz.textContent = isAr ? 'الأجزاء (٣٠)' : 'Juz (30)';
+    if (tabHizb) tabHizb.textContent = isAr ? 'الأحزاب (٦٠)' : 'Hizb (60)';
+    if (tabPages) tabPages.textContent = isAr ? 'الصفحات (٦٠٤)' : 'Pages (604)';
+    if (tabBookmarks) tabBookmarks.textContent = isAr ? 'الفواصل والمفضلة' : 'Bookmarks';
+
+    // Quick Filter Chips
+    const chipAll = document.querySelector('#surah-filter-chips [data-filter="all"]');
+    const chipMeccan = document.querySelector('#surah-filter-chips [data-filter="meccan"]');
+    const chipMedinan = document.querySelector('#surah-filter-chips [data-filter="medinan"]');
+    const chipPopular = document.querySelector('#surah-filter-chips [data-filter="popular"]');
+
+    if (chipAll) chipAll.textContent = isAr ? 'الكل' : 'All';
+    if (chipMeccan) chipMeccan.textContent = isAr ? 'مكية (٨٦)' : 'Meccan (86)';
+    if (chipMedinan) chipMedinan.textContent = isAr ? 'مدنية (٢٨)' : 'Medinan (28)';
+    if (chipPopular) chipPopular.textContent = isAr ? 'السور الفاضلة (الكهف، يس، الملك...)' : 'Virtuous Surahs (Kahf, Yaseen...)';
+
+    // Search Placeholder
+    const searchInput = document.getElementById('quran-search-input');
+    if (searchInput) {
+      searchInput.placeholder = isAr ? 'ابحث عن سورة، جزء، أو رقم...' : 'Search by surah, juz, or number...';
+    }
+  }
+
   renderQuranSurahs() {
     const container = document.getElementById('quran-surahs-grid');
     if (!container || !this.quranData.SURAHS) return;
@@ -564,7 +607,7 @@ class NoorApp {
             <div class="surah-names-box">
               <span class="surah-en-name">${s.englishName}</span>
               <span class="surah-en-sub">
-                <span>${s.englishNameTranslation}</span>
+                <span>${s.type === 'Meccan' ? (isAr ? 'مكية' : 'Meccan') : (isAr ? 'مدنية' : 'Medinan')}</span>
                 <span class="material-symbols-rounded" style="font-size: 14px;">${s.type === 'Meccan' ? 'mosque' : 'apartment'}</span>
               </span>
             </div>
@@ -899,6 +942,60 @@ class NoorApp {
     if (prevBtn) prevBtn.addEventListener('click', () => this.playAyah(this.currentAyahIndex - 1));
     if (nextBtn) nextBtn.addEventListener('click', () => this.playAyah(this.currentAyahIndex + 1));
 
+    // Audio Progress Seeking Bar
+    const progContainer = document.getElementById('reader-audio-progress-container');
+    if (progContainer) {
+      progContainer.addEventListener('click', (e) => {
+        const rect = progContainer.getBoundingClientRect();
+        if (rect.width > 0) {
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          this.seekAudioTo(pct);
+        }
+      });
+    }
+
+    // Repeat Ayah Toggle Button
+    const repeatBtn = document.getElementById('reader-repeat-ayah-btn');
+    if (repeatBtn) {
+      repeatBtn.addEventListener('click', () => {
+        this.isAyahRepeatActive = !this.isAyahRepeatActive;
+        repeatBtn.classList.toggle('is-active', this.isAyahRepeatActive);
+        const isAr = this.isArabic();
+        this.showToast(this.isAyahRepeatActive
+          ? (isAr ? 'تم تفعيل تكرار الآية 🔁' : 'Ayah repeat enabled 🔁')
+          : (isAr ? 'تم إيقاف تكرار الآية' : 'Ayah repeat disabled'), 'repeat');
+      });
+    }
+
+    // Auto-Scroll Toggle Button
+    const autoscrollBtn = document.getElementById('reader-autoscroll-btn');
+    if (autoscrollBtn) {
+      autoscrollBtn.addEventListener('click', () => {
+        this.isAutoScrollEnabled = !this.isAutoScrollEnabled;
+        autoscrollBtn.classList.toggle('is-active', this.isAutoScrollEnabled);
+        const isAr = this.isArabic();
+        this.showToast(this.isAutoScrollEnabled
+          ? (isAr ? 'تم تفعيل التمرير التلقائي' : 'Auto-scroll enabled')
+          : (isAr ? 'تم إيقاف التمرير التلقائي' : 'Auto-scroll disabled'), 'vertical_align_center');
+      });
+    }
+
+    // Rewind 5s & Forward 5s Buttons
+    const rewindBtn = document.getElementById('reader-rewind-btn');
+    if (rewindBtn) {
+      rewindBtn.addEventListener('click', () => this.rewindAudio(5));
+    }
+    const forwardBtn = document.getElementById('reader-forward-btn');
+    if (forwardBtn) {
+      forwardBtn.addEventListener('click', () => this.forwardAudio(5));
+    }
+
+    // Audio Mute Toggle Button
+    const muteBtn = document.getElementById('reader-mute-btn');
+    if (muteBtn) {
+      muteBtn.addEventListener('click', () => this.toggleAudioMute());
+    }
+
     // Audio Speed Toggle
     const speedBtn = document.getElementById('reader-speed-btn');
     if (speedBtn) {
@@ -1011,9 +1108,10 @@ class NoorApp {
     const isAr = this.isArabic();
     const saved = this.getSavedAyahForSurah(surah.number);
 
+    let html = '';
     if (mode === 'mushaf') {
       // Flowing sacred Mushaf layout
-      contentBox.innerHTML = `
+      html = `
         <div class="mushaf-flow-container">
           ${surah.ayahs.map((ayah, idx) => {
             const cleanText = ayah.text.replace('بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ', '');
@@ -1025,7 +1123,7 @@ class NoorApp {
       `;
     } else {
       // Ayah-by-Ayah Study Mode Cards
-      contentBox.innerHTML = `
+      html = `
         <div class="ayah-study-list">
           ${surah.ayahs.map((ayah, idx) => {
             const cleanText = ayah.text.replace('بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ', '');
@@ -1057,6 +1155,8 @@ class NoorApp {
         </div>
       `;
     }
+
+    contentBox.innerHTML = html;
   }
 
   // MANUAL INTERACTION: Clicking Ayah in Mushaf selects it and reveals actions without autoplaying audio
@@ -1351,7 +1451,22 @@ class NoorApp {
     const newEl = document.getElementById(`ayah-node-${index}`);
     if (newEl) {
       newEl.classList.add('active-reciting');
-      newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (this.isAutoScrollEnabled) {
+        newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // Update Dock Meta Info
+    const isAr = this.isArabic();
+    const ayahBadge = document.getElementById('reader-audio-ayah-badge');
+    if (ayahBadge) {
+      ayahBadge.innerText = isAr
+        ? `الآية ${this.toArabicNumerals(ayah.numberInSurah)} من ${this.toArabicNumerals(this.currentSurah.numberOfAyahs)}`
+        : `Ayah ${ayah.numberInSurah} of ${this.currentSurah.numberOfAyahs}`;
+    }
+    const surahTitle = document.getElementById('reader-audio-surah-title');
+    if (surahTitle) {
+      surahTitle.innerText = isAr ? this.currentSurah.name : this.currentSurah.englishName;
     }
 
     // Automatically reveal the audio dock so user has full control
@@ -1368,26 +1483,86 @@ class NoorApp {
       // Show pulsing dot on header toggle button
       const activeDot = document.getElementById('reader-audio-active-dot');
       if (activeDot) activeDot.classList.remove('hidden');
+    } else {
+      this.showToast(isAr ? 'عذراً، التسجيل الصوتي غير متوفر لهذه الآية' : 'Audio recording not available for this ayah', 'info');
     }
 
-    // Auto advance to next ayah on finish
-    this.audioPlayer.onended = () => {
-      if (this.currentAyahIndex + 1 < this.currentSurah.ayahs.length) {
-        this.playAyah(this.currentAyahIndex + 1);
-      } else {
-        this.updatePlayPauseUI(false);
-        this.updateMiniPlayerUI(false);
-        const activeDot = document.getElementById('reader-audio-active-dot');
-        if (activeDot) activeDot.classList.add('hidden');
+    // Multi-tier audio fallback handler
+    let fallbackAttempt = 0;
+    this.audioPlayer.onerror = () => {
+      console.warn("Audio playback error on ayah", ayah.numberInSurah, "- attempting fallback CDN");
+      fallbackAttempt++;
+
+      const surahPad = String(this.currentSurah.number).padStart(3, '0');
+      const ayahPad = String(ayah.numberInSurah).padStart(3, '0');
+      const everyAyahUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPad}${ayahPad}.mp3`;
+      const quranCdnUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.number}.mp3`;
+      const secondaryUrl = (ayah.audioSecondary && ayah.audioSecondary[0]) ? ayah.audioSecondary[0] : null;
+
+      let nextUrl = null;
+      if (fallbackAttempt === 1) {
+        if (secondaryUrl && this.audioPlayer.src !== secondaryUrl) {
+          nextUrl = secondaryUrl;
+        } else if (this.audioPlayer.src !== everyAyahUrl) {
+          nextUrl = everyAyahUrl;
+        } else if (this.audioPlayer.src !== quranCdnUrl) {
+          nextUrl = quranCdnUrl;
+        }
+      } else if (fallbackAttempt === 2) {
+        if (this.audioPlayer.src !== everyAyahUrl) {
+          nextUrl = everyAyahUrl;
+        } else if (this.audioPlayer.src !== quranCdnUrl) {
+          nextUrl = quranCdnUrl;
+        }
       }
+
+      if (nextUrl) {
+        this.audioPlayer.src = nextUrl;
+        this.audioPlayer.play().catch(e => {
+          console.warn("Fallback play error:", e);
+          this.advanceOrFinishAyah();
+        });
+      } else {
+        this.advanceOrFinishAyah();
+      }
+    };
+
+    // Auto advance to next ayah on finish (or repeat current if repeat mode active)
+    this.audioPlayer.onended = () => {
+      this.advanceOrFinishAyah();
     };
   }
 
+  advanceOrFinishAyah() {
+    const isAr = this.isArabic();
+    if (this.isAyahRepeatActive) {
+      this.playAyah(this.currentAyahIndex);
+    } else if (this.currentSurah && this.currentSurah.ayahs && this.currentAyahIndex + 1 < this.currentSurah.ayahs.length) {
+      this.playAyah(this.currentAyahIndex + 1);
+    } else {
+      this.updatePlayPauseUI(false);
+      this.updateMiniPlayerUI(false);
+      const activeDot = document.getElementById('reader-audio-active-dot');
+      if (activeDot) activeDot.classList.add('hidden');
+      this.showToast(isAr ? 'تمت تلاوة السورة الكريمة كاملة بحمد الله 🤲' : 'Completed Surah recitation! 🤲', 'check_circle');
+    }
+  }
+
   toggleQuranPlayback() {
-    if (!this.currentSurah) return;
+    if (!this.currentSurah || !this.currentSurah.ayahs) return;
     if (this.audioPlayer.paused) {
       const idx = this.selectedAyahIndex !== null ? this.selectedAyahIndex : this.currentAyahIndex;
-      this.playAyah(idx);
+      // Resume if already loaded for the target ayah
+      if (this.audioPlayer.src && this.currentAyahIndex === idx && !isNaN(this.audioPlayer.duration) && this.audioPlayer.duration > 0) {
+        this.audioPlayer.play().catch(e => console.warn("Audio play blocked:", e));
+        this.updatePlayPauseUI(true);
+        this.updateMiniPlayerUI(true);
+        this.startAudioProgressTracking();
+        const activeDot = document.getElementById('reader-audio-active-dot');
+        if (activeDot) activeDot.classList.remove('hidden');
+      } else {
+        this.playAyah(idx);
+      }
     } else {
       this.audioPlayer.pause();
       this.updatePlayPauseUI(false);
@@ -1395,6 +1570,66 @@ class NoorApp {
       const activeDot = document.getElementById('reader-audio-active-dot');
       if (activeDot) activeDot.classList.add('hidden');
     }
+  }
+
+  seekAudioTo(percent) {
+    if (!this.audioPlayer || isNaN(this.audioPlayer.duration) || this.audioPlayer.duration <= 0) return;
+    const clamped = Math.max(0, Math.min(1, percent));
+    this.audioPlayer.currentTime = clamped * this.audioPlayer.duration;
+    this.updateAudioProgressUI();
+  }
+
+  rewindAudio(seconds = 5) {
+    if (!this.audioPlayer) return;
+    this.audioPlayer.currentTime = Math.max(0, this.audioPlayer.currentTime - seconds);
+    this.updateAudioProgressUI();
+  }
+
+  forwardAudio(seconds = 5) {
+    if (!this.audioPlayer) return;
+    const maxDur = isNaN(this.audioPlayer.duration) ? Infinity : this.audioPlayer.duration;
+    this.audioPlayer.currentTime = Math.min(maxDur, this.audioPlayer.currentTime + seconds);
+    this.updateAudioProgressUI();
+  }
+
+  toggleAudioMute() {
+    if (!this.audioPlayer) return;
+    this.audioPlayer.muted = !this.audioPlayer.muted;
+    const muteIcon = document.getElementById('reader-mute-icon');
+    if (muteIcon) {
+      muteIcon.innerText = this.audioPlayer.muted ? 'volume_off' : 'volume_up';
+    }
+  }
+
+  formatAudioTime(seconds) {
+    if (isNaN(seconds) || seconds < 0) return '00:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  updateAudioProgressUI() {
+    const fill = document.getElementById('reader-audio-progress-fill');
+    const curTimeEl = document.getElementById('reader-audio-time-current');
+    const totTimeEl = document.getElementById('reader-audio-time-total');
+    if (!this.audioPlayer) return;
+
+    const duration = this.audioPlayer.duration || 0;
+    const current = this.audioPlayer.currentTime || 0;
+
+    if (duration > 0 && fill) {
+      fill.style.width = `${Math.min(100, (current / duration) * 100)}%`;
+    }
+    if (curTimeEl) curTimeEl.innerText = this.formatAudioTime(current);
+    if (totTimeEl && duration > 0) totTimeEl.innerText = this.formatAudioTime(duration);
+  }
+
+  startAudioProgressTracking() {
+    if (this.audioProgressInterval) clearInterval(this.audioProgressInterval);
+    this.audioProgressInterval = setInterval(() => {
+      if (!this.audioPlayer || this.audioPlayer.paused) return;
+      this.updateAudioProgressUI();
+    }, 250);
   }
 
   stopQuranPlayback() {
@@ -1933,7 +2168,10 @@ class NoorApp {
     this.updateTasbeehUI();
     this.renderQuranSurahs();
     this.renderQuranJuz();
+    this.renderQuranAhzab();
+    this.renderQuranPages();
     this.renderBookmarks();
+    this.updateQuranHubUI();
   }
 
   isArabic() {

@@ -536,11 +536,14 @@ body.ltr {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 2rem;
+  padding: 1.75rem 2rem;
   background: linear-gradient(145deg, var(--surface-card) 0%, var(--surface-1) 100%);
   border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
   position: relative;
-  min-height: 280px;
+  min-height: 270px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
 .hero-prayer-card::before {
@@ -561,19 +564,21 @@ body.ltr {
   justify-content: space-between;
   position: relative;
   z-index: 2;
+  gap: 1rem;
 }
 
 .prayer-badge-group {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  min-width: 0;
 }
 
 .prayer-status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.3rem 0.75rem;
+  padding: 0.25rem 0.75rem;
   background: rgba(16, 185, 129, 0.15);
   border: 1px solid var(--border-accent);
   border-radius: var(--radius-pill);
@@ -584,28 +589,30 @@ body.ltr {
 }
 
 .prayer-name-large {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
   color: var(--text-primary);
-  margin-top: 0.4rem;
+  margin-top: 0.35rem;
   font-family: var(--font-arabic);
+  white-space: nowrap;
 }
 
 .prayer-time-target {
-  font-size: clamp(2.4rem, 6vw, 3.4rem);
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
   font-weight: 800;
   color: var(--accent-color);
   line-height: 1;
   font-variant-numeric: tabular-nums;
   text-align: end;
+  white-space: nowrap;
 }
 
 .prayer-time-label {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   text-align: end;
-  margin-top: 0.2rem;
+  margin-top: 0.25rem;
 }
 
 /* Circular & Digital Countdown Ring */
@@ -613,25 +620,26 @@ body.ltr {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  margin: 1.5rem 0;
+  gap: 1.5rem;
+  margin: 1.25rem 0;
   position: relative;
   z-index: 2;
 }
 
 .progress-ring-box {
   position: relative;
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .progress-ring-svg {
   transform: rotate(-90deg);
-  width: 140px;
-  height: 140px;
+  width: 100%;
+  height: 100%;
 }
 
 .progress-ring-bg {
@@ -650,24 +658,28 @@ body.ltr {
 .countdown-digits-box {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  justify-content: center;
 }
 
 .countdown-time-str {
-  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-size: clamp(1.85rem, 4.5vw, 2.8rem);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
   color: var(--text-primary);
   line-height: 1;
+  white-space: nowrap;
 }
 
 .countdown-caption {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   margin-top: 0.35rem;
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  white-space: nowrap;
 }
 
 /* Prayer Footer Bar (Dates & Geolocation) */
@@ -961,14 +973,17 @@ body.ltr {
 .quran-tabs-nav {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.85rem;
   overflow-x: auto;
-  padding: 0.35rem;
+  padding: 0.55rem 0.75rem;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.35rem;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scroll-padding: 0 0.75rem;
 }
 
 .quran-tabs-nav::-webkit-scrollbar {
@@ -976,32 +991,37 @@ body.ltr {
 }
 
 .quran-tab-pill {
-  flex: 1;
-  min-width: 90px;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1rem;
+  gap: 0.6rem;
+  padding: 0.65rem 1.3rem;
+  min-height: 44px;
   border-radius: var(--radius-pill);
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--trans-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .quran-tab-pill:hover {
   color: var(--text-primary);
+  background: var(--surface-2);
 }
 
 .quran-tab-pill.active {
   background: var(--accent-color);
   color: #000000;
+  border-color: transparent;
   box-shadow: 0 4px 15px var(--accent-glow);
+  font-weight: 700;
 }
 
 /* Search & Filter Bar */
@@ -1057,34 +1077,54 @@ body.ltr .search-input {
 .filter-chips-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.85rem;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding: 0.35rem 0.5rem 0.85rem;
+  margin-bottom: 1.25rem;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scroll-padding: 0 0.5rem;
+}
+
+.filter-chips-row::-webkit-scrollbar {
+  display: none;
 }
 
 .chip-btn {
-  padding: 0.35rem 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.58rem 1.25rem;
+  min-height: 42px;
   border-radius: var(--radius-pill);
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 0.82rem;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--trans-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .chip-btn:hover {
   color: var(--text-primary);
   border-color: var(--border-accent);
+  background: var(--surface-2);
+  transform: translateY(-1px);
 }
 
 .chip-btn.active {
-  background: var(--surface-2);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0.1));
   border-color: var(--accent-color);
   color: var(--accent-color);
+  box-shadow: 0 0 14px var(--accent-glow);
+  font-weight: 700;
 }
 
 /* ==========================================================================
@@ -1316,10 +1356,24 @@ body.ltr .search-input {
   inset: 0;
   background: var(--bg-color);
   background-image: var(--bg-gradient);
-  z-index: 1000;
+  z-index: 2000;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Hide navigation bar and global sticky mini player when inside a Surah reader */
+body.reader-active .bottom-nav {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+body.reader-active .floating-mini-player {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .reader-top-bar {
@@ -1500,15 +1554,16 @@ body.ltr .search-input {
 .reader-body-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem 1.5rem 5rem;
+  padding: 2rem 1.5rem 6rem;
   max-width: 920px;
   margin: 0 auto;
   width: 100%;
   transition: padding-bottom 0.3s ease;
+  -webkit-overflow-scrolling: touch;
 }
 
 .reader-body-scroll.dock-open {
-  padding-bottom: 9rem;
+  padding-bottom: 12.5rem;
 }
 
 /* Classical Mushaf Surah Header Banner */
@@ -1548,19 +1603,23 @@ body.ltr .search-input {
 .mushaf-flow-container {
   font-family: var(--font-quran);
   font-size: var(--quran-font-size);
-  line-height: 2.6;
+  line-height: 2.7;
   text-align: justify;
+  text-justify: inter-word;
+  text-align-last: center;
   direction: rtl;
   color: var(--text-primary);
   position: relative;
   user-select: text;
+  word-spacing: 2px;
+  padding: 0.5rem 0.25rem 2.5rem;
 }
 
 .ayah-span {
   transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
   padding: 3px 6px;
-  border-radius: 6px;
+  border-radius: 8px;
   display: inline;
   position: relative;
 }
@@ -1571,32 +1630,33 @@ body.ltr .search-input {
 
 /* Ayah is currently selected (manual action pending, audio NOT started yet) */
 .ayah-span.active-selected {
-  background: rgba(56, 189, 248, 0.2) !important;
+  background: rgba(56, 189, 248, 0.22) !important;
   color: #ffffff;
-  border-radius: 6px;
-  outline: 2px dashed rgba(56, 189, 248, 0.5);
+  border-radius: 8px;
+  outline: 2px dashed rgba(56, 189, 248, 0.6);
   outline-offset: 3px;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
 }
 
 /* Ayah is actively reciting by the audio player */
 .ayah-span.active-reciting {
-  background: rgba(251, 191, 36, 0.25) !important;
-  color: var(--gold-color);
-  border-radius: 6px;
-  box-shadow: 0 0 18px var(--gold-glow);
-  outline: none;
+  background: rgba(251, 191, 36, 0.24) !important;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 22px var(--gold-glow), inset 0 0 12px rgba(251, 191, 36, 0.2);
+  outline: 1.5px solid rgba(251, 191, 36, 0.55);
+  text-shadow: 0 0 2px rgba(251, 191, 36, 0.5);
 }
 
 /* Ayah is saved as user's bookmark */
 .ayah-span.has-saved-bookmark {
   border-bottom: 2.5px solid var(--gold-color);
-  background: rgba(251, 191, 36, 0.08);
+  background: rgba(251, 191, 36, 0.1);
 }
 
 .ayah-span.has-saved-bookmark .ayah-num-symbol {
   color: var(--gold-color);
-  text-shadow: 0 0 12px var(--gold-glow);
+  text-shadow: 0 0 14px var(--gold-glow);
   font-weight: 700;
 }
 
@@ -1621,12 +1681,20 @@ body.ltr .search-input {
 }
 
 .ayah-num-symbol {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--gold-color);
-  margin: 0 0.35rem;
-  font-size: 0.9em;
+  margin: 0 0.4rem;
+  font-size: 0.88em;
+  font-family: var(--font-arabic);
+  font-weight: 700;
   user-select: none;
+  vertical-align: middle;
+  text-shadow: 0 0 10px var(--gold-glow);
 }
+
+
 
 /* Floating Mushaf Ayah Action Bar */
 .mushaf-ayah-action-bar {
@@ -1802,47 +1870,205 @@ body.ltr .search-input {
 
 /* Organized Collapsible Quran Player Controls Dock */
 .reader-audio-dock {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--surface-card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-top: 1px solid var(--border-subtle);
-  padding: 0.75rem 1.5rem;
+  background: rgba(8, 18, 38, 0.96);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-top: 1px solid var(--border-gold);
+  padding: 0.75rem 1.5rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  z-index: 20;
+  gap: 0.55rem;
+  z-index: 2010;
   transform: translateY(115%);
   opacity: 0;
   pointer-events: none;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  box-shadow: 0 -16px 45px rgba(0, 0, 0, 0.75), 0 -1px 0 rgba(251, 191, 36, 0.2);
 }
 
 .reader-audio-dock.is-open {
   transform: translateY(0);
   opacity: 1;
   pointer-events: auto;
-  box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.65), 0 -1px 0 rgba(147, 197, 253, 0.15);
+}
+
+/* Audio Dock Meta Row: Ayah & Surah title, Time display, Repeat & Autoscroll & Collapse */
+.audio-dock-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.audio-dock-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.audio-ayah-badge {
+  font-family: var(--font-arabic);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold-color);
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.6rem;
+  white-space: nowrap;
+}
+
+.audio-surah-title {
+  font-family: var(--font-arabic);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.audio-dock-meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.audio-time-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  direction: ltr;
+  background: var(--surface-1);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+}
+
+.time-divider {
+  opacity: 0.5;
+}
+
+.icon-btn-dock {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  padding: 0;
+}
+
+.icon-btn-dock .material-symbols-rounded {
+  font-size: 1.15rem;
+}
+
+.icon-btn-dock:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+}
+
+.icon-btn-dock.is-active {
+  background: rgba(56, 189, 248, 0.18);
+  color: var(--accent-color);
+  border-color: var(--border-accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* Interactive Progress Bar Container */
+.audio-progress-container {
+  width: 100%;
+  padding: 6px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.audio-progress-bar {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  transition: height 0.15s ease;
+  direction: ltr;
+}
+
+.audio-progress-container:hover .audio-progress-bar {
+  height: 7px;
+}
+
+.audio-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color), var(--gold-color));
+  width: 0%;
+  transition: width 0.1s linear;
+  border-radius: 999px;
 }
 
 .audio-dock-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.audio-reciter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.55rem;
+  max-width: 190px;
+}
+
+.reciter-mic-icon {
+  font-size: 1.1rem;
+  color: var(--gold-color);
+  flex-shrink: 0;
+}
+
+.audio-reciter-select {
+  border: none !important;
+  background: transparent !important;
+  padding: 0.25rem 0.2rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 100%;
+  cursor: pointer;
+  outline: none;
 }
 
 .audio-dock-center {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
 .play-btn-circle {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--accent-color);
   color: #000000;
@@ -1853,6 +2079,7 @@ body.ltr .search-input {
   cursor: pointer;
   box-shadow: 0 4px 15px var(--accent-glow);
   transition: all var(--trans-fast);
+  flex-shrink: 0;
 }
 
 .play-btn-circle:hover {
@@ -1863,20 +2090,10 @@ body.ltr .search-input {
   transform: scale(0.95);
 }
 
-.audio-progress-bar {
-  width: 100%;
-  height: 4px;
-  background: var(--surface-glass);
-  border-radius: 999px;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.audio-progress-bar-fill {
-  height: 100%;
-  background: var(--accent-color);
-  width: 0%;
-  transition: width 0.2s linear;
+.audio-dock-options {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 /* App Toast Notification */
@@ -2488,38 +2705,332 @@ body.ltr .search-input {
    MOBILE & RESPONSIVE REFINEMENTS
    ========================================================================== */
 @media (max-width: 640px) {
-  .reader-top-bar {
-    padding: 0.6rem 0.8rem;
+  /* 1. HOME TOP BAR HEADER */
+  .top-bar {
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+
+  .top-brand {
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .brand-badge {
+    width: 38px;
+    height: 38px;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .brand-info {
+    min-width: 0;
+  }
+
+  .brand-info h1 {
+    font-size: 1.15rem;
+    line-height: 1.1;
+  }
+
+  .brand-info span {
+    font-size: 0.72rem;
+    display: block;
+    white-space: nowrap;
+  }
+
+  .top-actions {
     gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  #location-select-btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+    max-width: 145px;
+  }
+
+  #current-city-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 85px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  #open-settings-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* 2. HERO NEXT PRAYER SECTION */
+  .hero-prayer-card {
+    padding: 1.25rem 1rem;
+    min-height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .prayer-header-row {
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .prayer-status-chip {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+  }
+
+  .prayer-name-large {
+    font-size: 1.45rem;
+    margin-top: 0.2rem;
+  }
+
+  .prayer-time-target {
+    font-size: 1.7rem;
+  }
+
+  .prayer-time-label {
+    font-size: 0.72rem;
+    margin-top: 0.15rem;
+  }
+
+  .countdown-centerpiece {
+    gap: 0.85rem;
+    margin: 1rem 0;
+    justify-content: center;
+  }
+
+  .progress-ring-box {
+    width: 95px;
+    height: 95px;
+    flex-shrink: 0;
+  }
+
+  .progress-ring-box div[style*="font-size"] {
+    font-size: 1.35rem !important;
+  }
+
+  .countdown-digits-box {
+    min-width: 0;
+  }
+
+  .countdown-time-str {
+    font-size: 1.75rem;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .countdown-caption {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    gap: 0.25rem;
+  }
+
+  .hero-footer-bar {
+    padding-top: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .date-pill-box {
+    font-size: 0.78rem;
+    gap: 0.35rem;
+  }
+
+  /* 3. READER TOP BAR */
+  .reader-top-bar {
+    padding: 0.45rem 0.65rem;
+    gap: 0.35rem;
+  }
+
+  .reader-title-info {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
   }
 
   .reader-surah-name {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .reader-surah-meta {
+    font-size: 0.68rem;
+    white-space: nowrap;
   }
 
   .reader-toolbar {
-    gap: 0.3rem;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+
+  .reader-toolbar .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .reader-toolbar .glass-pill {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.72rem;
   }
 
   .saved-ayah-pill {
-    font-size: 0.78rem !important;
-    padding: 0.3rem 0.6rem !important;
+    font-size: 0.72rem !important;
+    padding: 0.25rem 0.45rem !important;
   }
 
+  .saved-ayah-pill span:not(.material-symbols-rounded) {
+    max-width: 65px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 4. MUSHAF AYAH ACTION BAR */
   .mushaf-ayah-action-bar {
     padding: 0.35rem 0.55rem;
-    gap: 0.3rem;
+    gap: 0.25rem;
     max-width: 98vw;
   }
 
   .action-bar-btn {
-    padding: 0.35rem 0.5rem;
-    font-size: 0.78rem;
+    padding: 0.35rem 0.45rem;
+    font-size: 0.75rem;
     gap: 0.2rem;
   }
 
   .action-bar-badge {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     padding: 0.15rem 0.45rem;
+  }
+
+  /* 5. READER AUDIO DOCK ON MOBILE */
+  .reader-audio-dock {
+    padding: 0.55rem 0.85rem 0.85rem;
+    gap: 0.45rem;
+  }
+
+  .audio-dock-meta-row {
+    font-size: 0.78rem;
+  }
+
+  .audio-ayah-badge {
+    font-size: 0.72rem;
+    padding: 0.1rem 0.45rem;
+  }
+
+  .audio-surah-title {
+    font-size: 0.82rem;
+    max-width: 90px;
+  }
+
+  .audio-time-display {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .icon-btn-dock {
+    width: 28px;
+    height: 28px;
+  }
+
+  .icon-btn-dock .material-symbols-rounded {
+    font-size: 1rem;
+  }
+
+  .audio-dock-row {
+    gap: 0.35rem;
+  }
+
+  .audio-reciter-wrap {
+    max-width: 125px;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .audio-reciter-select {
+    font-size: 0.72rem !important;
+  }
+
+  .play-btn-circle {
+    width: 42px;
+    height: 42px;
+  }
+
+  .play-btn-circle .material-symbols-rounded {
+    font-size: 1.65rem !important;
+  }
+
+  .audio-dock-center {
+    gap: 0.3rem;
+  }
+
+  .audio-dock-options {
+    gap: 0.25rem;
+  }
+
+  /* 6. FLOATING SURAH NAVIGATION BUTTONS ON PHONES */
+  .floating-surah-nav-btn {
+    top: auto;
+    bottom: 5.5rem;
+    transform: none;
+    width: 36px;
+    height: 36px;
+    opacity: 0.85;
+  }
+
+  .floating-surah-prev {
+    right: 0.5rem;
+  }
+
+  .floating-surah-next {
+    left: 0.5rem;
+  }
+
+  .reader-audio-dock.is-open ~ .floating-surah-nav-btn,
+  #view-quran-reader.dock-active .floating-surah-nav-btn {
+    bottom: 10.5rem;
+  }
+}
+
+/* Extra small phones (<= 380px) */
+@media (max-width: 380px) {
+  .hero-prayer-card {
+    padding: 1rem 0.75rem;
+  }
+
+  .prayer-name-large {
+    font-size: 1.3rem;
+  }
+
+  .prayer-time-target {
+    font-size: 1.5rem;
+  }
+
+  .countdown-centerpiece {
+    gap: 0.65rem;
+  }
+
+  .progress-ring-box {
+    width: 82px;
+    height: 82px;
+  }
+
+  .countdown-time-str {
+    font-size: 1.5rem;
+  }
+
+  .countdown-caption {
+    font-size: 0.7rem;
+  }
+
+  #location-select-btn {
+    max-width: 110px;
+  }
+
+  #current-city-label {
+    max-width: 60px;
   }
 }
