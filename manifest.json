@@ -4,8 +4,8 @@
   "description": "A beautiful Ramadan and Prayer tracking application.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#030712",
-  "theme_color": "#d4af37",
+  "background_color": "#060e1d",
+  "theme_color": "#060e1d",
   "orientation": "portrait",
   "icons": [
     {

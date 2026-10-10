@@ -1,448 +1,845 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Noor Prayer</title>
-  <meta name="description" content="A meaningful spiritual digital experience for prayer times.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>نور — مواقيت الصلاة والقرآن الكريم | Noor</title>
+  <meta name="description" content="تطبيق نور لمواقيت الصلاة، القرآن الكريم كاملاً بالأجزاء والسور، الأذكار والمسبحة الإلكترونية.">
+  
   <!-- Security Headers -->
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com data:; media-src 'self' blob: https://cdn.islamic.network https://verses.quran.com https://download.quranicaudio.com https://islamdownload.net; img-src 'self' data: blob:; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://api.bigdatacloud.net https://raw.githubusercontent.com https://cdn.islamic.network https://verses.quran.com https://download.quranicaudio.com https://islamdownload.net; object-src 'none'; base-uri 'self';">
+
   <!-- Progressive Web App Data -->
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#d4af37">
-  <link rel="icon" type="image/x-icon" href="assets/icon.png">
+  <meta name="theme-color" content="#060e1d">
+  <link rel="icon" type="image/png" href="assets/icon.png">
   <link rel="apple-touch-icon" href="assets/icon.png">
 
-  <!-- Core Styles & Fonts -->
-  <!-- Google Fonts: Outfit for pristine, modern UI; Amiri for Arabic script elements -->
+  <!-- Google Fonts: Outfit, Plus Jakarta Sans, Amiri, Scheherazade New -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Scheherazade+New:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Material Symbols Rounded for clean icons -->
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <!-- Material Symbols Rounded -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+  <!-- Master Stylesheet -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
-<body class="theme-dark">
+<body class="theme-dark rtl">
 
-  <!-- Canvas for particle background & celebrations -->
+  <!-- Background Particle Effects -->
   <canvas id="particles-canvas"></canvas>
 
-  <!-- Ramadan Theme Festive Decorations (Hidden by default, shown via CSS in Ramadan Mode) -->
+  <!-- Ramadan Festive Ornaments (shown in Ramadan Theme) -->
   <div class="ramadan-decorations">
-
-    <!-- ===== RAMADAN ZEENA (Pennant Bunting) ===== -->
-    <svg class="zeena-pennants" viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- The string line -->
-      <line x1="0" y1="4" x2="1440" y2="4" stroke="var(--accent-color)" stroke-width="2" opacity="0.8" />
-      <!-- Pennant triangles repeating across the full width (every 80px) -->
-      <!-- Color cycle: gold, deep teal, crimson, purple, emerald -->
-      <polygon points="0,4 40,4 20,50" fill="#d4af37" />
-      <polygon points="80,4 120,4 100,50" fill="#1a6b72" />
-      <polygon points="160,4 200,4 180,50" fill="#c0392b" />
-      <polygon points="240,4 280,4 260,50" fill="#6c3483" />
-      <polygon points="320,4 360,4 340,50" fill="#1e8449" />
-      <polygon points="400,4 440,4 420,50" fill="#d4af37" />
-      <polygon points="480,4 520,4 500,50" fill="#1a6b72" />
-      <polygon points="560,4 600,4 580,50" fill="#c0392b" />
-      <polygon points="640,4 680,4 660,50" fill="#6c3483" />
-      <polygon points="720,4 760,4 740,50" fill="#1e8449" />
-      <polygon points="800,4 840,4 820,50" fill="#d4af37" />
-      <polygon points="880,4 920,4 900,50" fill="#1a6b72" />
-      <polygon points="960,4 1000,4 980,50" fill="#c0392b" />
-      <polygon points="1040,4 1080,4 1060,50" fill="#6c3483" />
-      <polygon points="1120,4 1160,4 1140,50" fill="#1e8449" />
-      <polygon points="1200,4 1240,4 1220,50" fill="#d4af37" />
-      <polygon points="1280,4 1320,4 1300,50" fill="#1a6b72" />
-      <polygon points="1360,4 1400,4 1380,50" fill="#c0392b" />
-      <!-- Tiny dots at string joints -->
-      <circle cx="0" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="80" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="160" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="240" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="320" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="400" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="480" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="560" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="640" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="720" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="800" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="880" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="960" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="1040" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="1120" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="1200" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="1280" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="1360" cy="4" r="3" fill="var(--accent-color)" />
-      <circle cx="1440" cy="4" r="3" fill="var(--accent-color)" />
+    <svg class="zeena-pennants" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="4" x2="1440" y2="4" stroke="var(--gold-color)" stroke-width="2" opacity="0.8" />
+      <polygon points="0,4 35,4 17,45" fill="#d4af37" />
+      <polygon points="70,4 105,4 87,45" fill="#10b981" />
+      <polygon points="140,4 175,4 157,45" fill="#b45309" />
+      <polygon points="210,4 245,4 227,45" fill="#047857" />
+      <polygon points="280,4 315,4 297,45" fill="#d4af37" />
+      <polygon points="350,4 385,4 367,45" fill="#10b981" />
+      <polygon points="420,4 455,4 437,45" fill="#b45309" />
+      <polygon points="490,4 525,4 507,45" fill="#047857" />
+      <polygon points="560,4 595,4 577,45" fill="#d4af37" />
+      <polygon points="630,4 665,4 647,45" fill="#10b981" />
+      <polygon points="700,4 735,4 717,45" fill="#b45309" />
+      <polygon points="770,4 805,4 787,45" fill="#047857" />
+      <polygon points="840,4 875,4 857,45" fill="#d4af37" />
+      <polygon points="910,4 945,4 927,45" fill="#10b981" />
+      <polygon points="980,4 1015,4 997,45" fill="#b45309" />
+      <polygon points="1050,4 1085,4 1067,45" fill="#047857" />
+      <polygon points="1120,4 1155,4 1137,45" fill="#d4af37" />
+      <polygon points="1190,4 1225,4 1207,45" fill="#10b981" />
+      <polygon points="1260,4 1295,4 1277,45" fill="#b45309" />
+      <polygon points="1330,4 1365,4 1347,45" fill="#047857" />
+      <polygon points="1400,4 1435,4 1417,45" fill="#d4af37" />
     </svg>
 
-    <!-- ===== 5 FAWANISS ===== -->
-    <!-- Fanoos 1: Far Left -->
     <svg class="fanoos fanoos-left" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-      <line x1="50" y1="0" x2="50" y2="30" stroke="var(--accent-color)" stroke-width="2" />
-      <circle cx="50" cy="35" r="5" fill="none" stroke="var(--accent-color)" stroke-width="2" />
-      <path d="M 30 60 Q 50 15 70 60 Z" fill="var(--accent-glow)" />
-      <polygon points="25,60 75,60 85,90 15,90" fill="var(--accent-color)" />
-      <polygon points="15,90 85,90 70,160 30,160" fill="rgba(212,175,55,0.15)" stroke="var(--accent-color)"
-        stroke-width="2" />
-      <path d="M 50 110 A 15 15 0 1 0 50 145 A 12 12 0 1 1 50 110" fill="var(--accent-color)" />
-      <polygon points="30,160 70,160 60,180 40,180" fill="var(--accent-glow)" />
-      <polygon points="25,180 75,180 80,195 20,195" fill="var(--accent-color)" />
+      <line x1="50" y1="0" x2="50" y2="35" stroke="var(--gold-color)" stroke-width="2" />
+      <circle cx="50" cy="40" r="5" fill="none" stroke="var(--gold-color)" stroke-width="2" />
+      <polygon points="25,60 75,60 85,90 15,90" fill="var(--gold-color)" />
+      <polygon points="15,90 85,90 70,160 30,160" fill="rgba(212,175,55,0.25)" stroke="var(--gold-color)" stroke-width="2" />
+      <circle cx="50" cy="125" r="9" fill="var(--gold-glow)" />
+      <polygon points="30,160 70,160 60,180 40,180" fill="var(--gold-color)" />
     </svg>
 
-    <!-- Fanoos 2: Inner Left (Diamond) -->
-    <svg class="fanoos fanoos-inner-left" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-      <line x1="50" y1="0" x2="50" y2="40" stroke="var(--accent-color)" stroke-width="2" />
-      <polygon points="50,40 70,80 50,140 30,80" fill="rgba(212,175,55,0.2)" stroke="var(--accent-color)"
-        stroke-width="2" />
-      <polygon points="40,140 60,140 55,160 45,160" fill="var(--accent-color)" />
-      <circle cx="50" cy="90" r="8" fill="var(--accent-glow)" />
-    </svg>
-
-    <!-- Fanoos 3: Center (Teardrop) -->
-    <svg class="fanoos fanoos-center" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-      <line x1="50" y1="0" x2="50" y2="20" stroke="var(--accent-color)" stroke-width="2" />
-      <path d="M 50 20 C 80 20 90 70 50 120 C 10 70 20 20 50 20 Z" fill="rgba(212,175,55,0.15)"
-        stroke="var(--accent-color)" stroke-width="2" />
-      <circle cx="50" cy="65" r="10" fill="var(--accent-glow)" />
-      <path d="M 40 120 L 60 120 L 50 140 Z" fill="var(--accent-color)" />
-    </svg>
-
-    <!-- Fanoos 4: Inner Right (Diamond) -->
-    <svg class="fanoos fanoos-inner-right" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-      <line x1="50" y1="0" x2="50" y2="35" stroke="var(--accent-color)" stroke-width="2" />
-      <polygon points="50,35 65,75 50,130 35,75" fill="rgba(212,175,55,0.25)" stroke="var(--accent-color)"
-        stroke-width="2" />
-      <polygon points="40,130 60,130 55,150 45,150" fill="var(--accent-color)" />
-      <circle cx="50" cy="85" r="6" fill="var(--accent-glow)" />
-    </svg>
-
-    <!-- Fanoos 5: Far Right -->
     <svg class="fanoos fanoos-right" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-      <line x1="50" y1="0" x2="50" y2="30" stroke="var(--accent-color)" stroke-width="2" />
-      <circle cx="50" cy="35" r="5" fill="none" stroke="var(--accent-color)" stroke-width="2" />
-      <path d="M 30 60 Q 50 15 70 60 Z" fill="var(--accent-glow)" />
-      <polygon points="25,60 75,60 85,90 15,90" fill="var(--accent-color)" />
-      <polygon points="15,90 85,90 70,160 30,160" fill="rgba(212,175,55,0.15)" stroke="var(--accent-color)"
-        stroke-width="2" />
-      <path d="M 50 110 A 15 15 0 1 0 50 145 A 12 12 0 1 1 50 110" fill="var(--accent-color)" />
-      <polygon points="30,160 70,160 60,180 40,180" fill="var(--accent-glow)" />
-      <polygon points="25,180 75,180 80,195 20,195" fill="var(--accent-color)" />
+      <line x1="50" y1="0" x2="50" y2="35" stroke="var(--gold-color)" stroke-width="2" />
+      <circle cx="50" cy="40" r="5" fill="none" stroke="var(--gold-color)" stroke-width="2" />
+      <polygon points="25,60 75,60 85,90 15,90" fill="var(--gold-color)" />
+      <polygon points="15,90 85,90 70,160 30,160" fill="rgba(212,175,55,0.25)" stroke="var(--gold-color)" stroke-width="2" />
+      <circle cx="50" cy="125" r="9" fill="var(--gold-glow)" />
+      <polygon points="30,160 70,160 60,180 40,180" fill="var(--gold-color)" />
     </svg>
-
   </div>
 
-
-
-
-
-
-
-
   <!-- Splash Screen -->
-  <div id="splash-screen" class="splash flex-center">
-    <div class="logo-container">
-      <h1 class="splash-title">Noor</h1>
-      <p class="splash-subtitle">Prayer Experience</p>
-    </div>
-    <div class="loader"></div>
+  <div id="splash-screen" class="splash">
+    <div class="splash-icon">🌙</div>
+    <h1 class="splash-title">نور</h1>
+    <p class="splash-subtitle">تجربة إيمانية متكاملة</p>
+    <div class="splash-loader"></div>
   </div>
 
   <!-- Main Application Wrapper -->
   <main id="app-content" class="app-container hidden">
 
-    <!-- HOME VIEW -->
-    <div id="view-home" class="view active">
-      <!-- Header -->
-      <header class="app-header">
-        <div class="header-left">
-          <h1 class="app-title" style="font-size: 2rem; font-weight: 700; letter-spacing: 1px; color: #ffffff;">Noor
-          </h1>
+    <!-- Top Action Bar -->
+    <header class="top-bar">
+      <div class="top-brand">
+        <div class="brand-badge">🌙</div>
+        <div class="brand-info">
+          <h1 id="app-title-header">نور</h1>
+          <span id="header-greeting">مرحباً بك</span>
         </div>
-        <div class="header-right" style="display:flex; align-items:center; gap: 1rem;">
-          <div class="location-container" id="location-picker">
-            <div class="location-text" style="text-align: right;">
-              <h2 id="city-name" style="font-size: 1.1rem;">Locating...</h2>
-              <p id="country-name" style="font-size: 0.8rem;">--</p>
-            </div>
-            <span class="material-symbols-rounded">location_on</span>
+      </div>
+      <div class="top-actions">
+        <!-- City Location Button -->
+        <button class="glass-pill" id="location-select-btn" title="تغيير المدينة">
+          <span class="material-symbols-rounded" style="font-size: 1.1rem; color: var(--accent-color);">location_on</span>
+          <span id="current-city-label">القاهرة</span>
+        </button>
+        <!-- Settings Button -->
+        <button class="icon-btn" id="open-settings-btn" aria-label="الإعدادات" title="الإعدادات">
+          <span class="material-symbols-rounded">settings</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         1. HOME VIEW (Prayer Times, Live Countdown, Wird, Daily Ayah)
+         ==================================================================== -->
+    <section id="view-home" class="view active">
+      
+      <!-- HERO: NEXT PRAYER & COUNTDOWN -->
+      <div class="glass-card hero-prayer-card" id="active-prayer-card">
+        <div class="prayer-header-row">
+          <div class="prayer-badge-group">
+            <span class="prayer-status-chip">
+              <span class="material-symbols-rounded" style="font-size: 1rem;">notifications_active</span>
+              <span id="prayer-status-text">الصلاة القادمة</span>
+            </span>
+            <h2 class="prayer-name-large" id="next-prayer-name">صلاة العصر</h2>
           </div>
-          <button class="settings-btn" id="open-settings-btn" aria-label="Settings">
-            <span class="material-symbols-rounded">settings</span>
+          <div>
+            <div class="prayer-time-target" id="next-prayer-time">--:--</div>
+            <div class="prayer-time-label" id="prayer-time-sub">وقت الأذان</div>
+          </div>
+        </div>
+
+        <!-- Circular Progress Ring & Digital Countdown -->
+        <div class="countdown-centerpiece">
+          <div class="progress-ring-box">
+            <svg class="progress-ring-svg" viewBox="0 0 140 140">
+              <defs>
+                <linearGradient id="countdown-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="var(--accent-color)" />
+                  <stop offset="100%" stop-color="var(--gold-color)" />
+                </linearGradient>
+              </defs>
+              <circle class="progress-ring-bg" stroke-width="8" fill="transparent" r="58" cx="70" cy="70" />
+              <circle id="countdown-progress-circle" class="progress-ring-circle" stroke="url(#countdown-ring-gradient)" stroke-width="8" fill="transparent" r="58" cx="70" cy="70" stroke-dasharray="364.42" stroke-dashoffset="364.42" />
+            </svg>
+            <div style="position: absolute; font-size: 1.8rem;">🕌</div>
+          </div>
+          <div class="countdown-digits-box">
+            <span class="countdown-time-str" id="countdown-timer">00:00:00</span>
+            <span class="countdown-caption">
+              <span class="material-symbols-rounded" style="font-size: 1.1rem; color: var(--accent-color);">timelapse</span>
+              <span id="countdown-sub-label">الوقت المتبقي حتى الأذان</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Dates Footer -->
+        <div class="hero-footer-bar">
+          <div class="date-pill-box">
+            <span class="material-symbols-rounded" style="font-size: 1.1rem; color: var(--gold-color);">calendar_month</span>
+            <span class="hijri-highlight" id="hijri-date-label">--</span>
+          </div>
+          <div class="date-pill-box">
+            <span id="gregorian-date-label" style="font-size: 0.82rem; color: var(--text-muted);">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 PRAYERS HORIZONTAL TIMELINE -->
+      <div class="prayer-timeline-grid" id="prayer-timeline-container">
+        <!-- Injected via JavaScript (Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha) -->
+      </div>
+
+      <!-- BENTO GRID: SPIRITUAL MODULES -->
+      <div class="bento-grid" style="margin-top: 1.25rem;">
+        
+        <!-- Khatmah / Daily Wird Tracker Card -->
+        <div class="glass-card wird-card col-6">
+          <div class="wird-header">
+            <div class="wird-title">
+              <span class="material-symbols-rounded" style="color: var(--accent-color);">auto_stories</span>
+              <span>تتبع الورد القرآني</span>
+            </div>
+            <span class="wird-streak-badge" id="wird-streak-label">🔥 ٥ أيام متتالية</span>
+          </div>
+
+          <div class="wird-stats-row">
+            <div>
+              <span class="wird-count-big" id="wird-pages-read">٤</span>
+              <span class="wird-count-label" id="wird-goal-target"> / ٤ صفحات اليوم</span>
+            </div>
+            <span style="font-size: 0.85rem; color: var(--gold-color); font-weight: 700;" id="khatmah-percent-label">٢٥٪ من الختمة</span>
+          </div>
+
+          <div class="wird-progress-bar-bg">
+            <div class="wird-progress-fill" id="wird-progress-bar" style="width: 100%;"></div>
+          </div>
+
+          <div class="wird-actions-row">
+            <button class="btn-primary" id="wird-add-page-btn" style="flex: 1;">
+              <span class="material-symbols-rounded">add</span>
+              <span>+١ صفحة</span>
+            </button>
+            <button class="btn-secondary" onclick="window.app.switchToTab('view-quran')" style="flex: 1;">
+              <span class="material-symbols-rounded">menu_book</span>
+              <span>متابعة القراءة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ayah of the Day Card -->
+        <div class="glass-card quote-card col-6">
+          <div class="quote-badge">✨ آية اليوم</div>
+          <p class="quote-text" id="daily-ayah-text">﴿ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ ﴾</p>
+          <div class="quote-ref" id="daily-ayah-ref">سورة الرعد — الآية ٢٨</div>
+          <div class="quote-actions">
+            <button class="glass-pill" id="copy-daily-ayah-btn">
+              <span class="material-symbols-rounded" style="font-size: 1rem;">content_copy</span>
+              <span>نسخ</span>
+            </button>
+            <button class="glass-pill" id="listen-daily-ayah-btn">
+              <span class="material-symbols-rounded" style="font-size: 1rem;">volume_up</span>
+              <span>استماع</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Daily Du'aa Snippet Card -->
+        <div class="glass-card quote-card col-12" style="padding: 1.5rem 2rem;">
+          <div class="quote-badge">🤲 دعاء اليوم من حصن المسلم</div>
+          <p class="quote-text" id="doaa-snippet-text" style="font-size: 1.25rem;">اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالآخِرَةِ</p>
+          <div class="quote-actions" style="margin-top: 0.75rem;">
+            <button class="glass-pill" id="copy-daily-doaa-btn">
+              <span class="material-symbols-rounded" style="font-size: 1rem;">share</span>
+              <span>مشاركة الدعاء</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ====================================================================
+         2. QURAN HUB VIEW (Surahs, 30 Juzuh, 60 Ahzab, 604 Pages, Bookmarks)
+         ==================================================================== -->
+    <section id="view-quran" class="view">
+      <div class="quran-hub-header">
+        
+        <!-- Multi-Tab Navigation Pills -->
+        <div class="quran-tabs-nav" id="quran-tabs-container">
+          <button class="quran-tab-pill active" data-quran-tab="surahs">
+            <span class="material-symbols-rounded" style="font-size: 1.1rem;">format_list_bulleted</span>
+            <span>السور (١١٤)</span>
+          </button>
+          <button class="quran-tab-pill" data-quran-tab="juz">
+            <span class="material-symbols-rounded" style="font-size: 1.1rem;">auto_stories</span>
+            <span>الأجزاء (٣٠)</span>
+          </button>
+          <button class="quran-tab-pill" data-quran-tab="hizb">
+            <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmark_border</span>
+            <span>الأحزاب (٦٠)</span>
+          </button>
+          <button class="quran-tab-pill" data-quran-tab="pages">
+            <span class="material-symbols-rounded" style="font-size: 1.1rem;">menu_book</span>
+            <span>الصفحات (٦٠٤)</span>
+          </button>
+          <button class="quran-tab-pill" data-quran-tab="bookmarks">
+            <span class="material-symbols-rounded" style="font-size: 1.1rem;">bookmarks</span>
+            <span>الفواصل والمفضلة</span>
           </button>
         </div>
-      </header>
 
-      <!-- Main Dashboard 3-Column Flex Container -->
-      <div class="main-dashboard-row">
-
-        <!-- Left Side: Doaa Snippet -->
-        <div class="dashboard-left">
-          <section class="doaa-card">
-            <h3 id="doaa-title-label" class="label">Daily Doaa</h3>
-            <p id="doaa-snippet" class="doaa-text"
-              style="font-family: var(--font-arabic); font-size: 1.1rem; line-height: 1.6; padding-top: 0.5rem;">
-              Loading...</p>
-          </section>
+        <!-- Search Bar -->
+        <div class="search-filter-box">
+          <div class="search-input-wrap">
+            <span class="material-symbols-rounded search-icon-inside">search</span>
+            <input type="text" id="quran-search-input" class="search-input" placeholder="ابحث عن سورة، جزء، أو رقم...">
+          </div>
         </div>
 
-        <!-- Center Side: Next Prayer & Countdown -->
-        <div class="dashboard-center">
-          <section class="next-prayer-card" id="active-prayer-card">
-            <div class="card-glow"></div>
-            <div class="card-content-wrapper"
-              style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; width: 100%;">
-              <div class="large-clock desktop-only-clock" style="text-align: left;">
-                <h1 id="desktop-clock-display" style="margin-bottom: 0;">--:--</h1>
-              </div>
-              <div class="card-content">
-                <!-- Center: Prayer Name & Time -->
-                <div class="prayer-center-group">
-                  <h2 class="prayer-name" id="next-prayer-name">--</h2>
-                  <p class="prayer-time" id="next-prayer-time">--:--</p>
-                </div>
-                <!-- Right: Dates -->
-                <div class="prayer-right-group">
-                  <span id="gregorian-date" class="date-gregorian">--</span>
-                  <span id="hijri-date" class="date-hijri">--</span>
-                </div>
-              </div>
-            </div>
-          </section>
+        <!-- Quick Filter Chips for Surahs -->
+        <div class="filter-chips-row" id="surah-filter-chips">
+          <button class="chip-btn active" data-filter="all">الكل</button>
+          <button class="chip-btn" data-filter="meccan">مكية (٨٦)</button>
+          <button class="chip-btn" data-filter="medinan">مدنية (٢٨)</button>
+          <button class="chip-btn" data-filter="popular">السور الفاضلة (الكهف، يس، الملك...)</button>
+        </div>
+      </div>
 
-          <!-- Live Countdown -->
-          <section class="countdown-section">
-            <div class="countdown-circle">
-              <svg class="progress-ring" width="200" height="200" viewBox="0 0 200 200">
-                <circle class="progress-ring__backdrop" stroke-width="8" fill="transparent" r="90" cx="100" cy="100" />
-                <circle class="progress-ring__circle" stroke-width="8" fill="transparent" r="90" cx="100" cy="100" />
-              </svg>
-              <div class="countdown-text-container mt-1">
-                <!-- Clock lives here on mobile -->
-                <span class="clock-in-circle mobile-only-clock" id="mobile-clock-display">--:--</span>
-                <span class="countdown-timer" id="countdown-timer">00:00:00</span>
-                <span class="countdown-label">Time Remaining</span>
-              </div>
-            </div>
-          </section>
+      <!-- Tab Content 1: Surahs Grid -->
+      <div id="quran-tab-surahs" class="quran-tab-content active">
+        <div class="surah-grid" id="quran-surahs-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Tab Content 2: 30 Juzuh Grid -->
+      <div id="quran-tab-juz" class="quran-tab-content hidden">
+        <div class="juz-grid" id="quran-juz-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Tab Content 3: 60 Ahzab Grid -->
+      <div id="quran-tab-hizb" class="quran-tab-content hidden">
+        <div class="hizb-grid" id="quran-hizb-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Tab Content 4: Pages Jump & Grid -->
+      <div id="quran-tab-pages" class="quran-tab-content hidden">
+        <div class="page-jump-bar">
+          <span class="material-symbols-rounded" style="color: var(--accent-color);">search</span>
+          <span style="font-weight: 600;">انتقل مباشرة إلى الصفحة:</span>
+          <input type="number" id="quick-page-input" class="page-input" min="1" max="604" placeholder="١-٦٠٤">
+          <button class="btn-primary" id="go-to-page-btn" style="padding: 0.5rem 1.25rem;">انتقال</button>
+        </div>
+        <div class="pages-grid" id="quran-pages-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Tab Content 5: Bookmarks List -->
+      <div id="quran-tab-bookmarks" class="quran-tab-content hidden">
+        <div id="quran-bookmarks-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ====================================================================
+         3. MASBAHA VIEW (Electronic Smart Tasbeeh)
+         ==================================================================== -->
+    <section id="view-tasbeeh" class="view">
+      <div class="masbaha-container">
+        
+        <!-- Preset Dhikr Selector -->
+        <div class="tasbeeh-preset-selector">
+          <select id="tasbeeh-select" class="custom-select">
+            <!-- Populated via QURAN_DATA.TASBEEH_PRESETS -->
+          </select>
         </div>
 
-        <!-- Right Side: Today's Prayer List -->
-        <div class="dashboard-right">
-          <section class="today-prayers-side">
-            <div class="prayers-list-side" id="prayers-list">
-              <!-- Injected via JS -->
-            </div>
-          </section>
+        <!-- Giant Interactive Haptic Tasbeeh Button -->
+        <div class="tasbeeh-ring-button" id="tasbeeh-touch-target">
+          <span class="tasbeeh-count-big" id="tasbeeh-current-count">٠</span>
+          <span class="tasbeeh-target-label" id="tasbeeh-target-label">الهدف: ٣٣</span>
+        </div>
+
+        <!-- Target Mode Controls & Reset -->
+        <div class="tasbeeh-controls-row">
+          <button class="tasbeeh-round-btn" id="tasbeeh-reset-btn" title="تصفير العداد">
+            <span class="material-symbols-rounded">restart_alt</span>
+          </button>
+          
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="glass-pill active" data-target-count="33">٣٣</button>
+            <button class="glass-pill" data-target-count="99">٩٩</button>
+            <button class="glass-pill" data-target-count="100">١٠٠</button>
+            <button class="glass-pill" data-target-count="0">حر ∞</button>
+          </div>
+
+          <button class="tasbeeh-round-btn" id="tasbeeh-sound-toggle-btn" title="صوت النقر">
+            <span class="material-symbols-rounded" id="tasbeeh-sound-icon">volume_up</span>
+          </button>
+        </div>
+
+        <!-- Total Lifetime Dhikr Stats -->
+        <div class="tasbeeh-lifetime-box">
+          <span>إجمالي تسبيحاتك المسجلة: </span>
+          <strong id="tasbeeh-total-lifetime" style="color: var(--accent-color);">٠</strong>
         </div>
 
       </div>
-    </div>
+    </section>
 
 
-    <!-- QURAN VIEW -->
-    <div id="view-quran" class="view hidden">
-      <header class="app-header mb-2">
-        <h2 id="quran-page-title">Quran</h2>
-      </header>
-      <div class="quran-container" style="position: relative; z-index: 10;">
-        <!-- Surah list injected here -->
-        <div id="quran-list">Loading Surahs...</div>
+    <!-- ====================================================================
+         4. AZKAR VIEW (Fort of the Muslim & Supplications)
+         ==================================================================== -->
+    <section id="view-azkar" class="view">
+      <!-- Categories View -->
+      <div id="azkar-categories-section">
+        <div class="search-filter-box" style="margin-bottom: 1.5rem;">
+          <div class="search-input-wrap">
+            <span class="material-symbols-rounded search-icon-inside">search</span>
+            <input type="text" id="azkar-search-input" class="search-input" placeholder="ابحث في الأذكار والأدعية...">
+          </div>
+        </div>
+        <div class="azkar-categories-grid" id="azkar-categories-list">
+          <!-- Dynamically populated categories -->
+        </div>
       </div>
-    </div>
 
-    <!-- AZKAR VIEW -->
-    <div id="view-azkar" class="view hidden">
-      <header class="app-header mb-2">
-        <h2 id="azkar-page-title">Azkar</h2>
-      </header>
-      <div class="azkar-container">
-        <!-- Azkar categories or reader injected here -->
-        <div id="azkar-categories">Loading Azkar...</div>
-        <div id="azkar-reader" class="hidden"></div>
+      <!-- Individual Category Reader View -->
+      <div id="azkar-reader-section" class="hidden">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <button class="glass-pill" id="back-to-azkar-btn">
+            <span class="material-symbols-rounded" style="transform: scaleX(-1);">arrow_back</span>
+            <span>رجوع إلى الأذكار</span>
+          </button>
+          <h2 id="azkar-category-title" style="font-family: var(--font-arabic); font-size: 1.5rem; color: var(--gold-color);"></h2>
+        </div>
+        <div id="azkar-cards-container">
+          <!-- Dynamically populated cards -->
+        </div>
       </div>
-    </div>
+    </section>
+
+
+    <!-- ====================================================================
+         5. QIBLA VIEW (Luxury 3D Compass)
+         ==================================================================== -->
+    <section id="view-qibla" class="view">
+      <div class="qibla-wrapper">
+        <div class="compass-housing">
+          <div class="compass-disc" id="compass-disc-ring">
+            <span class="compass-direction-cardinal dir-n">ش (N)</span>
+            <span class="compass-direction-cardinal dir-s">ج (S)</span>
+            <span class="compass-direction-cardinal dir-e">ق (E)</span>
+            <span class="compass-direction-cardinal dir-w">غ (W)</span>
+            
+            <div id="qibla-arrow-container" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);">
+              <span class="material-symbols-rounded compass-arrow-needle">navigation</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="qibla-degree-large" id="qibla-degree-value">--°</div>
+        <p class="qibla-distance-label" id="qibla-city-distance">وجّه هاتفك نحو الكعبة المشرفة في مكة المكرمة</p>
+        
+        <button class="btn-secondary" id="calibrate-compass-btn" style="margin-top: 1.5rem;">
+          <span class="material-symbols-rounded">sensors</span>
+          <span>تفعيل وتحديث مستشعر البوصلة</span>
+        </button>
+      </div>
+    </section>
 
   </main>
 
-  <!-- Full Screen Quran Reader Modal -->
-  <div id="quran-reader" class="hidden"></div>
 
-  <!-- Bottom Navigation -->
+  <!-- ====================================================================
+       FULL SCREEN DEDICATED QURAN READER MODAL
+       ==================================================================== -->
+  <div id="view-quran-reader" class="hidden">
+    <!-- Top Bar -->
+    <header class="reader-top-bar">
+      <button class="icon-btn" id="close-quran-reader-btn" title="رجوع إلى الفهرس">
+        <span class="material-symbols-rounded" style="transform: scaleX(-1);">arrow_back</span>
+      </button>
+
+      <div class="reader-title-info">
+        <h2 class="reader-surah-name" id="reader-surah-title">سورة البقرة</h2>
+        <span class="reader-surah-meta" id="reader-surah-info">الجزء ١ — ٢٨٦ آية</span>
+      </div>
+
+      <div class="reader-toolbar">
+        <!-- Go to Saved Ayah Button (Appears when a saved Ayah exists for this Surah) -->
+        <button class="glass-pill saved-ayah-pill hidden" id="reader-go-to-saved-btn" title="الانتقال إلى الآية المحفوظة">
+          <span class="material-symbols-rounded" style="color: var(--gold-color); font-size: 1.15rem;">bookmark</span>
+          <span id="reader-saved-ayah-label">الآية المحفوظة</span>
+        </button>
+
+        <!-- Toggle Audio Player Header Button -->
+        <button class="icon-btn reader-audio-toggle-btn" id="toggle-reader-audio-dock-btn" title="المشغل الصوتي">
+          <span class="material-symbols-rounded">headphones</span>
+          <span class="audio-playing-dot hidden" id="reader-audio-active-dot"></span>
+        </button>
+
+        <!-- Reading Mode Toggle (Mushaf vs Ayah Cards) -->
+        <button class="glass-pill" id="toggle-reader-mode-btn" title="تبديل وضع القراءة">
+          <span class="material-symbols-rounded" style="font-size: 1.1rem;">article</span>
+          <span id="reader-mode-label">المصحف</span>
+        </button>
+
+        <!-- Font Size A- / A+ -->
+        <button class="icon-btn" id="reader-font-dec-btn" title="تصغير الخط">
+          <span style="font-size: 0.85rem; font-weight: 700;">A-</span>
+        </button>
+        <button class="icon-btn" id="reader-font-inc-btn" title="تكبير الخط">
+          <span style="font-size: 1.1rem; font-weight: 700;">A+</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Two Small Floating Buttons for Switching Surahs (Forward & Backward) -->
+    <button class="floating-surah-nav-btn floating-surah-prev" id="floating-prev-surah-btn" title="السورة السابقة" aria-label="السورة السابقة">
+      <span class="material-symbols-rounded">chevron_right</span>
+      <span class="floating-surah-tooltip" id="floating-prev-surah-tooltip">السورة السابقة</span>
+    </button>
+
+    <button class="floating-surah-nav-btn floating-surah-next" id="floating-next-surah-btn" title="السورة التالية" aria-label="السورة التالية">
+      <span class="material-symbols-rounded">chevron_left</span>
+      <span class="floating-surah-tooltip" id="floating-next-surah-tooltip">السورة التالية</span>
+    </button>
+
+    <!-- Reader Scrollable Body -->
+    <div class="reader-body-scroll" id="reader-scroll-container">
+      <!-- Surah Classical Header -->
+      <div class="surah-ornate-header" id="reader-ornate-header">
+        <h2 id="reader-surah-banner-name">سُورَةُ البَقَرَةِ</h2>
+        <p class="surah-ornate-meta" id="reader-surah-banner-meta">مدنية • عدد آياتها ٢٨٦ • ترتيبها ٢</p>
+      </div>
+
+      <!-- Bismillah Calligraphy -->
+      <div class="bismillah-banner" id="reader-bismillah-banner">
+        بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+      </div>
+
+      <!-- Text Container (Filled via JavaScript based on mode) -->
+      <div id="quran-reader-content">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+    <!-- Floating Mushaf Ayah Action Bar (Appears on selecting an Ayah in Mushaf view) -->
+    <div id="mushaf-ayah-action-bar" class="mushaf-ayah-action-bar hidden">
+      <div class="action-bar-badge" id="action-bar-ayah-badge">الآية ١</div>
+      <div class="action-bar-divider"></div>
+      <button class="action-bar-btn" id="action-bar-save-btn" title="حفظ الآية كعلامة قراءة">
+        <span class="material-symbols-rounded" style="color: var(--gold-color);">bookmark_add</span>
+        <span id="action-bar-save-label">حفظ كفاصلة</span>
+      </button>
+      <button class="action-bar-btn action-bar-play" id="action-bar-play-btn" title="استماع إلى هذه الآية">
+        <span class="material-symbols-rounded">play_arrow</span>
+        <span>استماع</span>
+      </button>
+      <button class="action-bar-btn" id="action-bar-tafsir-btn" title="تفسير الميسر">
+        <span class="material-symbols-rounded">menu_book</span>
+        <span>تفسير</span>
+      </button>
+      <button class="action-bar-btn" id="action-bar-copy-btn" title="نسخ نص الآية">
+        <span class="material-symbols-rounded">content_copy</span>
+        <span>نسخ</span>
+      </button>
+      <button class="action-bar-close-btn" id="action-bar-close-btn" title="إغلاق">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+
+    <!-- Reader Audio Control Dock -->
+    <div class="reader-audio-dock" id="reader-audio-dock">
+      <!-- Progress Bar -->
+      <div class="audio-progress-bar" id="reader-audio-progress-bar">
+        <div class="audio-progress-bar-fill" id="reader-audio-progress-fill"></div>
+      </div>
+
+      <div class="audio-dock-row">
+        <!-- Reciter Selector -->
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <select id="reader-reciter-select" class="custom-select" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; width: 170px;">
+            <!-- Populated via QURAN_DATA.RECITERS -->
+          </select>
+        </div>
+
+        <!-- Playback Controls -->
+        <div class="audio-dock-center">
+          <button class="icon-btn" id="reader-prev-ayah-btn" title="الآية السابقة">
+            <span class="material-symbols-rounded">skip_next</span>
+          </button>
+          <button class="play-btn-circle" id="reader-play-pause-btn" title="تشغيل / إيقاف">
+            <span class="material-symbols-rounded" style="font-size: 2rem;">play_arrow</span>
+          </button>
+          <button class="icon-btn" id="reader-next-ayah-btn" title="الآية التالية">
+            <span class="material-symbols-rounded">skip_previous</span>
+          </button>
+        </div>
+
+        <!-- Speed & Collapse -->
+        <div style="display: flex; align-items: center; gap: 0.4rem;">
+          <button class="glass-pill" id="reader-speed-btn" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">1.0x</button>
+          <button class="icon-btn" id="collapse-reader-audio-dock-btn" title="تصغير المشغل الصوتي">
+            <span class="material-symbols-rounded">expand_more</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ====================================================================
+       GLOBAL STICKY MINI AUDIO PLAYER (Across whole app)
+       ==================================================================== -->
+  <div id="floating-mini-player" class="floating-mini-player hidden">
+    <div class="mini-player-left">
+      <div class="mini-equalizer-bars">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="mini-player-text">
+        <h4 id="mini-player-surah">سورة الفاتحة</h4>
+        <p id="mini-player-ayah">الآية ١ • مشاري العفاسي</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <button class="icon-btn" id="mini-play-btn" style="width: 36px; height: 36px;">
+        <span class="material-symbols-rounded" style="font-size: 1.3rem;">pause</span>
+      </button>
+      <button class="icon-btn" id="mini-close-btn" style="width: 36px; height: 36px;">
+        <span class="material-symbols-rounded" style="font-size: 1.1rem;">close</span>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ====================================================================
+       BOTTOM DOCK NAVIGATION BAR
+       ==================================================================== -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-target="view-home">
       <span class="material-symbols-rounded">home</span>
-      <span>Home</span>
+      <span>الرئيسية</span>
     </button>
     <button class="nav-item" data-target="view-quran">
       <span class="material-symbols-rounded">menu_book</span>
-      <span>Quran</span>
+      <span>القرآن</span>
+    </button>
+    <button class="nav-item" data-target="view-tasbeeh">
+      <span class="material-symbols-rounded">counter_1</span>
+      <span>المسبحة</span>
     </button>
     <button class="nav-item" data-target="view-azkar">
       <span class="material-symbols-rounded">volunteer_activism</span>
-      <span>Azkar</span>
+      <span>الأذكار</span>
+    </button>
+    <button class="nav-item" data-target="view-qibla">
+      <span class="material-symbols-rounded">explore</span>
+      <span>القبلة</span>
     </button>
   </nav>
 
-  <!-- Settings Overlay -->
+
+  <!-- ====================================================================
+       MODALS: SETTINGS, CITY SELECTOR, TAFSIR
+       ==================================================================== -->
+
+  <!-- 1. Settings Modal -->
   <div id="settings-modal" class="modal hidden">
     <div class="modal-backdrop"></div>
     <div class="modal-content">
       <header class="modal-header">
-        <h2>Settings</h2>
+        <h2>الإعدادات والمظهر</h2>
         <button id="close-settings-btn" class="icon-btn">
           <span class="material-symbols-rounded">close</span>
         </button>
       </header>
-      <div class="modal-body">
 
+      <div class="modal-body">
+        <!-- Theme Selection -->
         <section class="settings-group">
-          <h3>Theme</h3>
-          <div class="theme-options">
-            <button class="theme-btn" data-theme="theme-light">Light</button>
-            <button class="theme-btn active" data-theme="theme-ramadan">Ramadan</button>
+          <h3>المظهر والنمط</h3>
+          <div class="theme-options-grid">
+            <button class="theme-btn active" data-theme="theme-dark">
+              <span>🌌</span>
+              <span>النافي الليلي الدافئ</span>
+            </button>
+            <button class="theme-btn" data-theme="theme-emerald">
+              <span>🌿</span>
+              <span>الزمرد الملكي</span>
+            </button>
+            <button class="theme-btn" data-theme="theme-ramadan">
+              <span>🌙</span>
+              <span>الذهب الرمضاني</span>
+            </button>
+            <button class="theme-btn" data-theme="theme-light">
+              <span>☀️</span>
+              <span>لؤلؤة النور (فاتح)</span>
+            </button>
           </div>
         </section>
 
+        <!-- Quran Reading Settings -->
         <section class="settings-group">
-          <h3>Experience</h3>
-          <label class="setting-toggle">
-            <span>Play Sound at Adhan</span>
-            <input type="checkbox" id="setting-sound">
-            <span class="toggle-slider"></span>
-          </label>
-          <label class="setting-toggle">
-            <span>Visual Celebration</span>
-            <input type="checkbox" id="setting-celebration" checked>
-            <span class="toggle-slider"></span>
-          </label>
+          <h3>خط وقراءة القرآن</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <span>حجم الخط القرآني</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="glass-pill" id="quran-font-dec">A-</button>
+              <span id="quran-font-size-val" style="font-weight: 700;">28px</span>
+              <button class="glass-pill" id="quran-font-inc">A+</button>
+            </div>
+          </div>
+          <div style="margin-top: 0.5rem;">
+            <select id="setting-quran-font" class="custom-select" style="font-size: 0.9rem;">
+              <option value="Amiri">خط الأميري التقليدي (Amiri)</option>
+              <option value="Scheherazade New">خط شهرزاد الجديد (Scheherazade)</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- Audio & Alerts -->
+        <section class="settings-group">
+          <h3>الصوت والتنبيهات</h3>
+          <div class="setting-toggle-row">
+            <span>تشغيل صوت الأذان عند دخول الوقت</span>
+            <label class="toggle-slider-box">
+              <input type="checkbox" id="setting-sound">
+              <span class="slider-track"></span>
+            </label>
+          </div>
+          <div class="setting-toggle-row">
+            <span>الاحتفال المرئي بالنجوم والمؤثرات</span>
+            <label class="toggle-slider-box">
+              <input type="checkbox" id="setting-celebration" checked>
+              <span class="slider-track"></span>
+            </label>
+          </div>
+          <div class="setting-toggle-row">
+            <span>أصوات واهتزاز المسبحة الإلكترونية</span>
+            <label class="toggle-slider-box">
+              <input type="checkbox" id="setting-tasbeeh-sound" checked>
+              <span class="slider-track"></span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Prayer Calculation Methods -->
+        <section class="settings-group">
+          <h3>طريقة حساب أوقات الصلاة</h3>
+          <select id="setting-method" class="custom-select" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+            <option value="5">الهيئة العامة المصرية للمساحة</option>
+            <option value="4">جامعة أم القرى، مكة المكرمة</option>
+            <option value="3">رابطة العالم الإسلامي</option>
+            <option value="2">الجمعية الإسلامية لأمريكا الشمالية (ISNA)</option>
+            <option value="1">جامعة العلوم الإسلامية، كراتشي</option>
+            <option value="7">معهد الجيوفيزياء، جامعة طهران</option>
+            <option value="8">منطقة الخليج العربي</option>
+          </select>
+          <select id="setting-madhab" class="custom-select" style="font-size: 0.9rem;">
+            <option value="0">الجمهور (الشافعي، المالكي، الحنبلي)</option>
+            <option value="1">المذهب الحنفي</option>
+          </select>
+        </section>
+
+        <!-- Language Switcher -->
+        <section class="settings-group">
+          <h3>اللغة (Language)</h3>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="theme-btn active" id="lang-btn-ar" style="flex: 1; justify-content: center;">العربية</button>
+            <button class="theme-btn" id="lang-btn-en" style="flex: 1; justify-content: center;">English</button>
+          </div>
         </section>
 
         <!-- PWA Install Button -->
         <section class="settings-group" id="pwa-install-group" style="display: none;">
-          <h3>App</h3>
-          <button class="theme-btn" id="install-app-btn" style="width: 100%; border-radius: 12px; font-weight: 600;">
-            <span class="material-symbols-rounded" style="vertical-align: middle; margin-right: 8px;">download</span>
-            Install App
+          <button class="btn-primary" id="install-app-btn" style="width: 100%;">
+            <span class="material-symbols-rounded">download</span>
+            <span>تثبيت تطبيق نور على جهازك</span>
           </button>
         </section>
 
-        <section class="settings-group">
-          <h3>Calculation Method</h3>
-          <select id="setting-method" class="custom-select">
-            <option value="5">Egyptian General Authority</option>
-            <option value="4">Umm Al-Qura, Makkah</option>
-            <option value="2">ISNA (North America)</option>
-            <option value="3">Muslim World League</option>
-          </select>
-          <select id="setting-madhab" class="custom-select mt-2">
-            <option value="0">Standard (Shafi, Maliki, Hanbali)</option>
-            <option value="1">Hanafi</option>
-          </select>
-        </section>
-
-        <section class="settings-group ramadan-only-setting" id="madfaa-setting-group">
-          <h3>Ramadan Madfaa</h3>
-          <label class="setting-toggle">
-            <span>Enable Madfaa Transition</span>
-            <input type="checkbox" id="setting-madfaa" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </section>
-
-        <section class="settings-group">
-          <h3 id="setting-label-language">Language</h3>
-          <label class="setting-toggle">
-            <span id="setting-label-arabic">Arabic UI</span>
-            <input type="checkbox" id="setting-language-arabic">
-            <span class="toggle-slider"></span>
-          </label>
-        </section>
       </div>
     </div>
   </div>
 
-  <!-- Special Overlay for Madfaa -->
-  <div id="madfaa-overlay" class="madfaa-overlay hidden">
-    <div class="madfaa-flash"></div>
-    <div class="madfaa-text">أفطر الصائم</div>
-  </div>
 
-  <!-- Welcome Modal -->
-  <div id="welcome-modal" class="modal hidden" style="z-index: 9999;">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content" style="max-width: 450px;">
-      <div class="modal-header">
-        <h2>Welcome to Noor!</h2>
-      </div>
-      <div class="welcome-step" id="welcome-step-1">
-        <p style="text-align: center; font-size: 1.1rem; margin-bottom: 20px;">Thank you for using the Noor Prayer app.
-        </p>
-        <div class="welcome-info-box">
-          <p style="margin-bottom: 12px; font-weight: bold; color: var(--accent-color); font-size: 1.1rem;">Designed by
-            Adham Amin</p>
-          <div class="welcome-info-row">
-            <span class="material-symbols-rounded">phone</span>
-            <span>01022639397 EG</span>
-          </div>
-          <div class="welcome-info-row">
-            <span class="material-symbols-rounded">email</span>
-            <span>adham2211976@gmail.com</span>
-          </div>
-        </div>
-        <button id="welcome-next-btn" class="theme-btn"
-          style="width: 100%; border-radius: 12px; font-weight: bold; padding: 12px; margin-top: 10px;">
-          Next <span class="material-symbols-rounded"
-            style="vertical-align: middle; margin-left: 5px;">arrow_forward</span>
+  <!-- 2. City Location Selector Modal -->
+  <div id="location-modal" class="modal hidden">
+    <div class="modal-backdrop" onclick="document.getElementById('location-modal').classList.add('hidden')"></div>
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2>اختر مدينتك</h2>
+        <button class="icon-btn" onclick="document.getElementById('location-modal').classList.add('hidden')">
+          <span class="material-symbols-rounded">close</span>
         </button>
+      </header>
+      
+      <!-- Auto Detect GPS Button -->
+      <button class="btn-primary" id="auto-gps-detect-btn" style="width: 100%; margin-bottom: 1.25rem;">
+        <span class="material-symbols-rounded">my_location</span>
+        <span>تحديد الموقع تلقائياً عبر GPS</span>
+      </button>
+
+      <!-- Search City -->
+      <div class="search-input-wrap" style="margin-bottom: 1rem;">
+        <span class="material-symbols-rounded search-icon-inside">search</span>
+        <input type="text" id="city-search-input" class="search-input" placeholder="ابحث عن أي مدينة في العالم...">
       </div>
-      <div class="welcome-step hidden" id="welcome-step-2">
-        <p style="text-align: center; font-size: 1.1rem; margin-bottom: 20px;">Which language do you prefer?</p>
-        <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-          <button class="theme-btn" id="welcome-lang-en"
-            style="flex: 1; border-radius: 12px; font-weight: bold; padding: 15px; font-size: 1.1rem;">English</button>
-          <button class="theme-btn" id="welcome-lang-ar"
-            style="flex: 1; border-radius: 12px; font-weight: bold; padding: 15px; font-size: 1.1rem;">عربي</button>
+
+      <!-- Cities List -->
+      <div id="popular-cities-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 50vh; overflow-y: auto;">
+        <!-- Populated via QURAN_DATA.CITIES -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 3. Tafsir Ayah Modal -->
+  <div id="tafsir-modal" class="modal hidden">
+    <div class="modal-backdrop" onclick="document.getElementById('tafsir-modal').classList.add('hidden')"></div>
+    <div class="modal-content" style="max-width: 600px;">
+      <header class="modal-header">
+        <h2 id="tafsir-modal-title">تفسير الميسر</h2>
+        <button class="icon-btn" onclick="document.getElementById('tafsir-modal').classList.add('hidden')">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </header>
+      <div>
+        <div id="tafsir-ayah-box" style="font-family: var(--font-quran); font-size: 1.4rem; line-height: 2; margin-bottom: 1.25rem; color: var(--gold-color); direction: rtl;">
+          <!-- Ayah text -->
+        </div>
+        <div id="tafsir-text-box" style="font-size: 1.1rem; line-height: 1.9; color: var(--text-primary); direction: rtl; text-align: justify;">
+          جاري تحميل التفسير...
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Install App Modal (appears after welcome) -->
-  <div id="install-modal" class="modal hidden" style="z-index: 9998;">
-    <div class="modal-backdrop" onclick="document.getElementById('install-modal').classList.add('hidden')"></div>
-    <div class="modal-content" style="max-width: 400px; text-align: center;">
-      <!-- Gold glow icon -->
-      <div style="font-size: 4rem; margin-bottom: 0.5rem;">📲</div>
-      <h2 id="install-modal-title" style="font-size: 1.6rem; color: var(--accent-color); margin-bottom: 0.5rem;">Install
-        Noor</h2>
-      <p id="install-modal-body"
-        style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;">
-        Add Noor to your home screen for the best experience — instant access, offline support, and no browser bar!
-      </p>
-      <!-- Install button (same logic as settings) -->
-      <button id="install-modal-btn" class="theme-btn" style="width: 100%; border-radius: 14px; font-weight: 700; padding: 14px; font-size: 1.05rem;
-               background: var(--accent-color); color: #000; border: none;">
-        <span class="material-symbols-rounded" style="vertical-align: middle; margin-right: 6px;">download</span>
-        <span id="install-modal-btn-text">Install App</span>
-      </button>
-      <button onclick="document.getElementById('install-modal').classList.add('hidden')" style="margin-top: 0.75rem; background: transparent; border: none; color: var(--text-secondary);
-               cursor: pointer; font-size: 0.9rem; padding: 0.5rem; width: 100%;">
-        <span id="install-modal-later">Maybe later</span>
-      </button>
-    </div>
+
+  <!-- Ramadan Cannon (Madfaa) Overlay -->
+  <div id="madfaa-overlay" class="madfaa-overlay hidden">
+    <div class="madfaa-text">أَفْطَرَ الصَّائِمُونَ 🌙</div>
   </div>
 
 
-  <!-- PWA Service Worker Registration -->
+  <!-- Hidden Data Container for backwards compatibility -->
+  <div class="hidden" aria-hidden="true">
+    <span id="city-name"></span>
+    <span id="country-name"></span>
+    <span id="gregorian-date"></span>
+    <span id="hijri-date"></span>
+    <div id="prayers-list"></div>
+    <div id="doaa-snippet"></div>
+  </div>
+
+
+  <!-- Core Script Dependencies -->
+  <script src="js/quran_data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -450,55 +847,35 @@
       });
     }
 
-    // Handle standard PWA Install prompt (Android / Desktop Chrome)
+    // PWA Install prompt management
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
-      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      // Stash the event so it can be triggered later.
       deferredPrompt = e;
-      // Update UI notify the user they can install the PWA
-      document.getElementById('pwa-install-group').style.display = 'block';
+      const installGroup = document.getElementById('pwa-install-group');
+      if (installGroup) installGroup.style.display = 'block';
     });
 
-    // Fallback logic for iOS which doesn't support beforeinstallprompt yet
-    const isIos = () => {
-      const userAgent = window.navigator.userAgent.toLowerCase();
-      return /iphone|ipad|ipod/.test(userAgent);
-    }
-    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-    if (isIos() && !isInStandaloneMode()) {
-      document.getElementById('pwa-install-group').style.display = 'block';
-    }
-
-    const handleInstallClick = async () => {
-      if (deferredPrompt) {
-        // Show the install prompt
-        deferredPrompt.prompt();
-        // Wait for the user to respond to the prompt
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-          document.getElementById('pwa-install-group').style.display = 'none';
-          document.getElementById('install-modal').classList.add('hidden');
+    const installAppBtn = document.getElementById('install-app-btn');
+    if (installAppBtn) {
+      installAppBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            document.getElementById('pwa-install-group').style.display = 'none';
+          }
+          deferredPrompt = null;
         }
-        deferredPrompt = null;
-      } else if (isIos()) {
-        alert("To install Noor on iOS: Tap the 'Share' button at the bottom of Safari, then scroll down and tap 'Add to Home Screen'.");
-      }
-    };
-
-    document.getElementById('install-app-btn').addEventListener('click', handleInstallClick);
-    const installModalBtn = document.getElementById('install-modal-btn');
-    if (installModalBtn) installModalBtn.addEventListener('click', handleInstallClick);
+      });
+    }
   </script>
 
-  <!-- App Core Scripts -->
-  <script src="js/engine.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/particles.js"></script>
-  <script src="js/settings.js"></script>
-  <script src="js/main.js"></script>
+  <!-- Global App Toast Notification Container -->
+  <div id="app-toast" class="app-toast hidden">
+    <span class="material-symbols-rounded toast-icon" id="toast-icon">bookmark_added</span>
+    <span class="toast-message" id="toast-message"></span>
+  </div>
 </body>
 
 </html>

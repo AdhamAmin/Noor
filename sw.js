@@ -1,8 +1,9 @@
-const CACHE_NAME = 'noor-cache-v4';
+const CACHE_NAME = 'noor-cache-v5';
 const urlsToCache = [
     './',
     './index.html',
     './css/styles.css',
+    './js/quran_data.js',
     './js/engine.js',
     './js/api.js',
     './js/particles.js',
@@ -11,7 +12,7 @@ const urlsToCache = [
     './assets/icon.png',
     './assets/icon.svg',
     './manifest.json',
-    'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap'
+    'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap'
 ];
 
 // Hosts whose responses should be served cache-first (fast, semi-static data)
