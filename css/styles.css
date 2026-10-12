@@ -2096,6 +2096,205 @@ body.reader-active .floating-mini-player {
   gap: 0.45rem;
 }
 
+/* Audio Dock Buttons & Scope Badge */
+.icon-btn-dock.close-dock-btn {
+  color: var(--danger-color);
+}
+
+.icon-btn-dock.close-dock-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--danger-color);
+  color: #ff6b6b;
+  transform: scale(1.08);
+}
+
+.scope-text-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0 0.25rem;
+  white-space: nowrap;
+}
+
+#reader-scope-btn {
+  width: auto;
+  min-width: 34px;
+  padding: 0 0.6rem;
+  border-radius: var(--radius-pill);
+  gap: 0.3rem;
+}
+
+.close-btn-highlight:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: var(--danger-color) !important;
+  color: #ff6b6b !important;
+}
+
+/* Quran Audio Recitation Hero Card */
+.quran-audio-hero-card {
+  background: linear-gradient(135deg, rgba(16, 33, 65, 0.85), rgba(9, 21, 45, 0.94));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(251, 191, 36, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.quran-audio-hero-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 130px;
+  height: 130px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.quran-audio-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+  gap: 0.5rem;
+}
+
+.quran-audio-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold-color);
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.65rem;
+}
+
+.quran-audio-hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.6rem;
+}
+
+.quran-audio-hero-title {
+  font-family: var(--font-arabic);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.quran-audio-hero-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.quran-audio-hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quran-hero-play-all-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 16px var(--accent-glow);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.quran-hero-play-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px var(--accent-glow);
+}
+
+.quran-hero-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quran-hero-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.65rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.quran-hero-select-wrap .select-icon {
+  font-size: 1.1rem;
+  color: var(--gold-color);
+  flex-shrink: 0;
+}
+
+.quran-hero-select {
+  border: none !important;
+  background: transparent !important;
+  font-size: 0.82rem !important;
+  color: var(--text-primary);
+  width: 100%;
+  padding: 0.25rem 0.15rem !important;
+  cursor: pointer;
+}
+
+.quran-hero-play-surah-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.quran-hero-toggles-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#quran-hero-skip-stops-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+#quran-hero-skip-stops-toggle.is-active {
+  border-color: var(--accent-color);
+  background: rgba(56, 189, 248, 0.15);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
 /* App Toast Notification */
 .app-toast {
   position: fixed;
@@ -2907,68 +3106,195 @@ body.reader-active .floating-mini-player {
     padding: 0.15rem 0.45rem;
   }
 
+  /* 4.5. QURAN AUDIO HERO CARD ON MOBILE */
+  .quran-audio-hero-card {
+    padding: 1rem 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .quran-audio-hero-title {
+    font-size: 1.1rem;
+  }
+
+  .quran-audio-hero-desc {
+    font-size: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .quran-hero-play-all-btn {
+    font-size: 0.88rem;
+    padding: 0.55rem 1rem;
+    width: 100%;
+  }
+
+  .quran-hero-controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+  }
+
+  .quran-hero-select-wrap {
+    min-width: 100%;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .quran-hero-play-surah-btn {
+    justify-content: center;
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .quran-hero-toggles-row {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #quran-hero-skip-stops-toggle {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.75rem;
+  }
+
   /* 5. READER AUDIO DOCK ON MOBILE */
   .reader-audio-dock {
-    padding: 0.55rem 0.85rem 0.85rem;
-    gap: 0.45rem;
-  }
-
-  .audio-dock-meta-row {
-    font-size: 0.78rem;
-  }
-
-  .audio-ayah-badge {
-    font-size: 0.72rem;
-    padding: 0.1rem 0.45rem;
-  }
-
-  .audio-surah-title {
-    font-size: 0.82rem;
-    max-width: 90px;
-  }
-
-  .audio-time-display {
-    font-size: 0.7rem;
-    padding: 0.15rem 0.4rem;
-  }
-
-  .icon-btn-dock {
-    width: 28px;
-    height: 28px;
-  }
-
-  .icon-btn-dock .material-symbols-rounded {
-    font-size: 1rem;
-  }
-
-  .audio-dock-row {
+    padding: 0.5rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
     gap: 0.35rem;
   }
 
+  .audio-dock-meta-row {
+    font-size: 0.75rem;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .audio-dock-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .audio-ayah-badge {
+    font-size: 0.68rem;
+    padding: 0.1rem 0.4rem;
+  }
+
+  .audio-surah-title {
+    font-size: 0.78rem;
+    max-width: 85px;
+  }
+
+  .audio-dock-meta-actions {
+    gap: 0.25rem;
+  }
+
+  .audio-time-display {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .scope-text-badge {
+    display: none; /* Keep clean icon on small screens */
+  }
+
+  #reader-scope-btn {
+    padding: 0 0.35rem;
+    min-width: 30px;
+    height: 30px;
+  }
+
+  .icon-btn-dock {
+    width: 30px;
+    height: 30px;
+  }
+
+  .icon-btn-dock .material-symbols-rounded {
+    font-size: 1.05rem;
+  }
+
+  /* 2-tier responsive audio dock controls row */
+  .audio-dock-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .audio-reciter-wrap {
-    max-width: 125px;
-    padding: 0.1rem 0.35rem;
+    order: 1;
+    flex: 1;
+    min-width: 110px;
+    max-width: 160px;
+    padding: 0.15rem 0.45rem;
   }
 
   .audio-reciter-select {
     font-size: 0.72rem !important;
   }
 
-  .play-btn-circle {
-    width: 42px;
-    height: 42px;
-  }
-
-  .play-btn-circle .material-symbols-rounded {
-    font-size: 1.65rem !important;
-  }
-
-  .audio-dock-center {
+  .audio-dock-options {
+    order: 2;
     gap: 0.3rem;
   }
 
-  .audio-dock-options {
-    gap: 0.25rem;
+  .audio-dock-options .glass-pill {
+    padding: 0.2rem 0.45rem;
+    font-size: 0.7rem;
+  }
+
+  .audio-dock-options .icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .audio-dock-center {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 0.4rem;
+    padding-top: 0.15rem;
+  }
+
+  .audio-dock-center .icon-btn,
+  .audio-dock-center .icon-btn-dock {
+    width: 34px;
+    height: 34px;
+  }
+
+  .play-btn-circle {
+    width: 46px;
+    height: 46px;
+  }
+
+  .play-btn-circle .material-symbols-rounded {
+    font-size: 1.85rem !important;
+  }
+
+  .reader-body-scroll.dock-open {
+    padding-bottom: 14.5rem;
+  }
+
+  /* Sticky Mini Player on Mobile */
+  .floating-mini-player {
+    bottom: calc(5.85rem + env(safe-area-inset-bottom, 0px));
+    width: calc(100% - 1.25rem);
+    padding: 0.5rem 0.85rem;
+    z-index: 1015;
+  }
+
+  .mini-player-text h4 {
+    font-size: 0.82rem;
+    max-width: calc(100vw - 180px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mini-player-text p {
+    font-size: 0.7rem;
+    max-width: calc(100vw - 180px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* 6. FLOATING SURAH NAVIGATION BUTTONS ON PHONES */
@@ -2991,7 +3317,7 @@ body.reader-active .floating-mini-player {
 
   .reader-audio-dock.is-open ~ .floating-surah-nav-btn,
   #view-quran-reader.dock-active .floating-surah-nav-btn {
-    bottom: 10.5rem;
+    bottom: 11.5rem;
   }
 }
 

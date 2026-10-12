@@ -9,7 +9,7 @@
   
   <!-- Security Headers -->
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com data:; media-src 'self' blob: https://cdn.islamic.network https://verses.quran.com https://download.quranicaudio.com https://islamdownload.net; img-src 'self' data: blob:; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://api.bigdatacloud.net https://raw.githubusercontent.com https://cdn.islamic.network https://verses.quran.com https://download.quranicaudio.com https://islamdownload.net; object-src 'none'; base-uri 'self';">
+    content="default-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com data:; media-src 'self' blob: https://cdn.islamic.network https://verses.quran.com https://download.quranicaudio.com https://islamdownload.net https://everyayah.com; img-src 'self' data: blob:; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://api.bigdatacloud.net https://raw.githubusercontent.com https://cdn.islamic.network https://verses.quran.com https://download.quranicaudio.com https://islamdownload.net https://everyayah.com; object-src 'none'; base-uri 'self';">
 
   <!-- Progressive Web App Data -->
   <link rel="manifest" href="./manifest.json">
@@ -273,6 +273,61 @@
             <span class="material-symbols-rounded" style="font-size: 1.15rem;">bookmarks</span>
             <span class="tab-label">الفواصل والمفضلة</span>
           </button>
+        </div>
+
+        <!-- Quran Audio Recitation Hub Card (Listen to Whole Quran / Certain Surah / Skip Stops) -->
+        <div class="quran-audio-hero-card" id="quran-audio-hero-card">
+          <div class="quran-audio-hero-header">
+            <div class="quran-audio-hero-badge">
+              <span class="material-symbols-rounded" style="font-size: 1.1rem; color: var(--gold-color);">headphones</span>
+              <span id="quran-audio-hero-badge-text">مشغل التلاوة القرآنية</span>
+            </div>
+            <div class="quran-audio-hero-status-pill" id="quran-hero-scope-pill">
+              <span class="material-symbols-rounded" style="font-size: 0.95rem;">auto_stories</span>
+              <span id="quran-hero-scope-label">القرآن كاملاً</span>
+            </div>
+          </div>
+          
+          <h3 class="quran-audio-hero-title" id="quran-audio-hero-title">الاستماع لتلاوة القرآن الكريم</h3>
+          <p class="quran-audio-hero-desc" id="quran-audio-hero-desc">استمع إلى المصحف كاملاً بتلاوة متواصلة أو اختر سورة محددة مع إمكانية تخطي التوقفات والتحكم الكامل.</p>
+
+          <div class="quran-audio-hero-actions">
+            <!-- Play Whole Quran Button -->
+            <button class="btn-primary quran-hero-play-all-btn" id="quran-hero-play-all-btn" title="بدء الاستماع للقرآن كاملاً من البداية">
+              <span class="material-symbols-rounded" style="font-size: 1.35rem;">play_circle</span>
+              <span id="quran-hero-play-all-label">استمع للقرآن كاملاً</span>
+            </button>
+
+            <!-- Specific Surah & Reciter Selector Controls -->
+            <div class="quran-hero-controls-row">
+              <div class="quran-hero-select-wrap" title="اختر سورة محددة للاستماع إليها">
+                <span class="material-symbols-rounded select-icon">menu_book</span>
+                <select id="quran-hero-surah-select" class="custom-select quran-hero-select" aria-label="اختر سورة">
+                  <!-- Populated via JS -->
+                </select>
+              </div>
+
+              <div class="quran-hero-select-wrap" title="اختر القارئ">
+                <span class="material-symbols-rounded select-icon">mic</span>
+                <select id="quran-hero-reciter-select" class="custom-select quran-hero-select" aria-label="اختر القارئ">
+                  <!-- Populated via JS -->
+                </select>
+              </div>
+
+              <button class="glass-pill quran-hero-play-surah-btn" id="quran-hero-play-surah-btn" title="تشغيل السورة المحددة">
+                <span class="material-symbols-rounded" style="color: var(--accent-color);">play_arrow</span>
+                <span id="quran-hero-play-surah-label">تشغيل السورة</span>
+              </button>
+            </div>
+
+            <!-- Toggles: Skip Stops & Seamless Mode -->
+            <div class="quran-hero-toggles-row">
+              <button class="glass-pill is-active" id="quran-hero-skip-stops-toggle" title="تخطي التوقفات وتشغيل التلاوة بشكل متصل دون انقطاع">
+                <span class="material-symbols-rounded" style="font-size: 1.1rem; color: var(--accent-color);">fast_forward</span>
+                <span id="quran-hero-skip-stops-label">تخطي التوقفات (تشغيل متصل)</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Search Bar -->
@@ -548,7 +603,7 @@
 
     <!-- Reader Audio Control Dock -->
     <div class="reader-audio-dock" id="reader-audio-dock">
-      <!-- Top Audio Meta Row: Ayah Info, Time, Repeat & Collapse -->
+      <!-- Top Audio Meta Row: Ayah Info, Time, Scope, Skip Stops & Close -->
       <div class="audio-dock-meta-row">
         <div class="audio-dock-info">
           <span class="audio-ayah-badge" id="reader-audio-ayah-badge">الآية ١</span>
@@ -563,9 +618,20 @@
             <span id="reader-audio-time-total">00:00</span>
           </div>
 
+          <!-- Playback Scope Mode (Whole Quran vs Surah vs Ayah) -->
+          <button class="icon-btn-dock is-active" id="reader-scope-btn" title="نطاق التلاوة: القرآن كاملاً (اضغط للتغيير)">
+            <span class="material-symbols-rounded" id="reader-scope-icon" style="font-size: 1.05rem;">auto_stories</span>
+            <span class="scope-text-badge" id="reader-scope-badge">القرآن كاملاً</span>
+          </button>
+
+          <!-- Skip Stops / Continuous Playback Toggle -->
+          <button class="icon-btn-dock is-active" id="reader-skip-stops-btn" title="تخطي التوقفات (تشغيل متصل بدون توقف)">
+            <span class="material-symbols-rounded" style="font-size: 1.1rem;">fast_forward</span>
+          </button>
+
           <!-- Repeat Ayah Toggle Button -->
           <button class="icon-btn-dock" id="reader-repeat-ayah-btn" title="تكرار الآية الحالية">
-            <span class="material-symbols-rounded">repeat</span>
+            <span class="material-symbols-rounded">repeat_one</span>
           </button>
 
           <!-- Auto-scroll toggle -->
@@ -576,6 +642,11 @@
           <!-- Collapse Audio Dock button -->
           <button class="icon-btn-dock" id="collapse-reader-audio-dock-btn" title="تصغير المشغل الصوتي">
             <span class="material-symbols-rounded">expand_more</span>
+          </button>
+
+          <!-- Explicit Close 'X' Button to Stop Audio Completely -->
+          <button class="icon-btn-dock close-dock-btn" id="close-reader-audio-dock-btn" title="إيقاف التلاوة وإغلاق المشغل">
+            <span class="material-symbols-rounded">close</span>
           </button>
         </div>
       </div>
@@ -591,13 +662,16 @@
         <!-- Reciter Selector -->
         <div class="audio-reciter-wrap">
           <span class="material-symbols-rounded reciter-mic-icon">mic</span>
-          <select id="reader-reciter-select" class="custom-select audio-reciter-select">
+          <select id="reader-reciter-select" class="custom-select audio-reciter-select" aria-label="اختر القارئ">
             <!-- Populated via QURAN_DATA.RECITERS -->
           </select>
         </div>
 
         <!-- Playback Controls -->
         <div class="audio-dock-center">
+          <button class="icon-btn-dock" id="reader-prev-surah-btn" title="السورة السابقة">
+            <span class="material-symbols-rounded">first_page</span>
+          </button>
           <button class="icon-btn" id="reader-prev-ayah-btn" title="الآية السابقة">
             <span class="material-symbols-rounded">skip_next</span>
           </button>
@@ -612,6 +686,9 @@
           </button>
           <button class="icon-btn" id="reader-next-ayah-btn" title="الآية التالية">
             <span class="material-symbols-rounded">skip_previous</span>
+          </button>
+          <button class="icon-btn-dock" id="reader-next-surah-btn" title="السورة التالية">
+            <span class="material-symbols-rounded">last_page</span>
           </button>
         </div>
 
@@ -640,12 +717,12 @@
         <p id="mini-player-ayah">الآية ١ • مشاري العفاسي</p>
       </div>
     </div>
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <button class="icon-btn" id="mini-play-btn" style="width: 36px; height: 36px;">
+    <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
+      <button class="icon-btn" id="mini-play-btn" style="width: 38px; height: 38px;" title="تشغيل / إيقاف مؤقت" aria-label="تشغيل أو إيقاف">
         <span class="material-symbols-rounded" style="font-size: 1.3rem;">pause</span>
       </button>
-      <button class="icon-btn" id="mini-close-btn" style="width: 36px; height: 36px;">
-        <span class="material-symbols-rounded" style="font-size: 1.1rem;">close</span>
+      <button class="icon-btn close-btn-highlight" id="mini-close-btn" style="width: 38px; height: 38px;" title="إيقاف التلاوة وإغلاق" aria-label="إيقاف التلاوة وإغلاق المشغل">
+        <span class="material-symbols-rounded" style="font-size: 1.15rem;">close</span>
       </button>
     </div>
   </div>

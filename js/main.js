@@ -46,6 +46,10 @@ class NoorApp {
     this.adhanPlayer = new Audio();
     this.audioProgressInterval = null;
     this.isAyahRepeatActive = false;
+    this.isSurahRepeatActive = false;
+    this.audioPlayScope = 'all'; // 'all' (Whole Quran), 'surah' (Current Surah), 'ayah' (Repeat Ayah)
+    this.isSkipStopsEnabled = true; // Skip pauses/stops between ayahs (continuous playback)
+    this.isAudioStopped = false;
     this.isAutoScrollEnabled = true;
 
     // Masbaha Audio Synthesizer
@@ -90,6 +94,7 @@ class NoorApp {
     this.renderQuranJuz();
     this.renderQuranAhzab();
     this.renderQuranPages();
+    this.populateQuranHeroSelects();
     this.renderBookmarks();
     this.updateQuranHubUI();
     this.initTasbeeh();
@@ -556,6 +561,54 @@ class NoorApp {
         }
       });
     }
+
+    // Quran Audio Hero Card Controls (Listen to Whole Quran / Certain Surah / Skip Stops)
+    const playAllBtn = document.getElementById('quran-hero-play-all-btn');
+    if (playAllBtn) {
+      playAllBtn.addEventListener('click', () => {
+        this.startWholeQuranPlayback(1, 1);
+      });
+    }
+
+    const playSurahBtn = document.getElementById('quran-hero-play-surah-btn');
+    const heroSurahSelect = document.getElementById('quran-hero-surah-select');
+    if (playSurahBtn && heroSurahSelect) {
+      playSurahBtn.addEventListener('click', () => {
+        const surahId = parseInt(heroSurahSelect.value, 10) || 1;
+        this.startSurahPlayback(surahId);
+      });
+      heroSurahSelect.addEventListener('change', async (e) => {
+        const surahId = parseInt(e.target.value, 10) || 1;
+        const wasPlayerActive = this.isReaderAudioDockOpen ||
+                                (!this.audioPlayer.paused && this.audioPlayer.src) ||
+                                (!document.getElementById('floating-mini-player')?.classList.contains('hidden'));
+        if (wasPlayerActive) {
+          const surahData = await this.api.getSurah(surahId, this.currentReciter);
+          if (surahData) {
+            this.preparePlayerForSurah(surahData, 0);
+          }
+        }
+      });
+    }
+
+    const heroSkipStopsToggle = document.getElementById('quran-hero-skip-stops-toggle');
+    if (heroSkipStopsToggle) {
+      heroSkipStopsToggle.addEventListener('click', () => {
+        this.toggleSkipStops();
+      });
+    }
+
+    const heroReciterSelect = document.getElementById('quran-hero-reciter-select');
+    if (heroReciterSelect) {
+      heroReciterSelect.addEventListener('change', async (e) => {
+        this.currentReciter = e.target.value;
+        const readerReciterSelect = document.getElementById('reader-reciter-select');
+        if (readerReciterSelect) readerReciterSelect.value = this.currentReciter;
+        if (this.currentSurah) {
+          await this.reloadSurahAudio(this.currentSurah.number);
+        }
+      });
+    }
   }
 
   updateQuranHubUI() {
@@ -590,6 +643,26 @@ class NoorApp {
     if (searchInput) {
       searchInput.placeholder = isAr ? 'ابحث عن سورة، جزء، أو رقم...' : 'Search by surah, juz, or number...';
     }
+
+    // Quran Audio Hero Card Bilingual Content
+    const heroTitle = document.getElementById('quran-audio-hero-title');
+    const heroDesc = document.getElementById('quran-audio-hero-desc');
+    const heroBadge = document.getElementById('quran-audio-hero-badge-text');
+    const heroPlayAll = document.getElementById('quran-hero-play-all-label');
+    const heroPlaySurah = document.getElementById('quran-hero-play-surah-label');
+    const heroSkipStops = document.getElementById('quran-hero-skip-stops-label');
+
+    if (heroTitle) heroTitle.textContent = isAr ? 'الاستماع لتلاوة القرآن الكريم' : 'Listen to Quran Recitation';
+    if (heroDesc) heroDesc.textContent = isAr
+      ? 'استمع إلى المصحف كاملاً بتلاوة متواصلة أو اختر سورة محددة مع إمكانية تخطي التوقفات والتحكم الكامل.'
+      : 'Listen to the whole Quran continuously or select a specific Surah with seamless skip-stops control.';
+    if (heroBadge) heroBadge.textContent = isAr ? 'مشغل التلاوة القرآنية' : 'Quran Audio Player';
+    if (heroPlayAll) heroPlayAll.textContent = isAr ? 'استمع للقرآن كاملاً' : 'Play Whole Quran';
+    if (heroPlaySurah) heroPlaySurah.textContent = isAr ? 'تشغيل السورة' : 'Play Surah';
+    if (heroSkipStops) heroSkipStops.textContent = isAr ? 'تخطي التوقفات (تشغيل متصل)' : 'Skip Stops (Continuous)';
+
+    this.populateQuranHeroSelects();
+    this.updateAudioScopeUI();
   }
 
   renderQuranSurahs() {
@@ -809,7 +882,11 @@ class NoorApp {
     const toggleAudioBtn = document.getElementById('toggle-reader-audio-dock-btn');
     if (toggleAudioBtn) {
       toggleAudioBtn.addEventListener('click', () => {
+        const willOpen = !this.isReaderAudioDockOpen;
         this.toggleReaderAudioDock();
+        if (willOpen && this.currentSurah && !this.audioPlayer.src) {
+          this.preparePlayerForSurah(this.currentSurah, this.currentAyahIndex || 0);
+        }
       });
     }
 
@@ -922,6 +999,8 @@ class NoorApp {
       reciterSelect.value = this.currentReciter;
       reciterSelect.addEventListener('change', async (e) => {
         this.currentReciter = e.target.value;
+        const heroReciterSelect = document.getElementById('quran-hero-reciter-select');
+        if (heroReciterSelect) heroReciterSelect.value = this.currentReciter;
         if (this.currentSurah) {
           await this.reloadSurahAudio(this.currentSurah.number);
         }
@@ -936,11 +1015,47 @@ class NoorApp {
       });
     }
 
-    // Prev / Next Ayah
+    // Playback Scope Button (Whole Quran / Single Surah / Repeat Ayah)
+    const scopeBtn = document.getElementById('reader-scope-btn');
+    if (scopeBtn) {
+      scopeBtn.addEventListener('click', () => {
+        this.toggleAudioScope();
+      });
+    }
+
+    // Skip Stops (Continuous Playback) Toggle
+    const skipStopsBtn = document.getElementById('reader-skip-stops-btn');
+    if (skipStopsBtn) {
+      skipStopsBtn.addEventListener('click', () => {
+        this.toggleSkipStops();
+      });
+    }
+
+    // Explicit Close 'X' Button on Audio Dock (Stops audio completely & closes dock)
+    const closeDockBtn = document.getElementById('close-reader-audio-dock-btn');
+    if (closeDockBtn) {
+      closeDockBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.stopQuranPlayback();
+        this.toggleReaderAudioDock(false);
+      });
+    }
+
+    // Prev / Next Surah Skip Buttons in Dock
+    const prevSurahBtn = document.getElementById('reader-prev-surah-btn');
+    if (prevSurahBtn) {
+      prevSurahBtn.addEventListener('click', () => this.skipToSurah(-1));
+    }
+    const nextSurahBtn = document.getElementById('reader-next-surah-btn');
+    if (nextSurahBtn) {
+      nextSurahBtn.addEventListener('click', () => this.skipToSurah(1));
+    }
+
+    // Prev / Next Ayah (Handles boundary jump between Surahs when in Whole Quran mode)
     const prevBtn = document.getElementById('reader-prev-ayah-btn');
     const nextBtn = document.getElementById('reader-next-ayah-btn');
-    if (prevBtn) prevBtn.addEventListener('click', () => this.playAyah(this.currentAyahIndex - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => this.playAyah(this.currentAyahIndex + 1));
+    if (prevBtn) prevBtn.addEventListener('click', () => this.playPreviousAyahOrSurah());
+    if (nextBtn) nextBtn.addEventListener('click', () => this.playNextAyahOrSurah());
 
     // Audio Progress Seeking Bar
     const progContainer = document.getElementById('reader-audio-progress-container');
@@ -958,8 +1073,14 @@ class NoorApp {
     const repeatBtn = document.getElementById('reader-repeat-ayah-btn');
     if (repeatBtn) {
       repeatBtn.addEventListener('click', () => {
-        this.isAyahRepeatActive = !this.isAyahRepeatActive;
-        repeatBtn.classList.toggle('is-active', this.isAyahRepeatActive);
+        if (this.audioPlayScope === 'ayah') {
+          this.audioPlayScope = 'surah';
+          this.isAyahRepeatActive = false;
+        } else {
+          this.audioPlayScope = 'ayah';
+          this.isAyahRepeatActive = true;
+        }
+        this.updateAudioScopeUI();
         const isAr = this.isArabic();
         this.showToast(this.isAyahRepeatActive
           ? (isAr ? 'تم تفعيل تكرار الآية 🔁' : 'Ayah repeat enabled 🔁')
@@ -1008,7 +1129,7 @@ class NoorApp {
       });
     }
 
-    // Mini Player controls
+    // Mini Player controls: clicking 'X' stops audio completely!
     const miniPlayBtn = document.getElementById('mini-play-btn');
     if (miniPlayBtn) {
       miniPlayBtn.addEventListener('click', (e) => {
@@ -1028,19 +1149,36 @@ class NoorApp {
       miniPlayer.addEventListener('click', () => {
         const readerModal = document.getElementById('view-quran-reader');
         if (readerModal) readerModal.classList.remove('hidden');
+        document.body.classList.add('reader-active');
+        this.toggleReaderAudioDock(true);
       });
     }
   }
 
-  async openSurahReader(surahId, startAyahNum = 1) {
+  async openSurahReader(surahId, startAyahNum = 1, autoPlay = false) {
     const readerModal = document.getElementById('view-quran-reader');
     if (!readerModal) return;
 
     readerModal.classList.remove('hidden');
     document.body.classList.add('reader-active');
 
-    // Keep reader audio dock collapsed by default for clean reading
-    this.toggleReaderAudioDock(false);
+    const wasPlayerActive = this.isReaderAudioDockOpen ||
+                            (!this.audioPlayer.paused && this.audioPlayer.src) ||
+                            (!document.getElementById('floating-mini-player')?.classList.contains('hidden'));
+
+    // Pause any playing audio if changing surah without explicit autoPlay
+    if (this.audioPlayer && !this.audioPlayer.paused && !autoPlay) {
+      try {
+        this.audioPlayer.pause();
+      } catch (e) {}
+    }
+
+    // Keep reader audio dock state open if auto-playing or if player was active
+    if (autoPlay || wasPlayerActive) {
+      this.toggleReaderAudioDock(true);
+    } else {
+      this.toggleReaderAudioDock(false);
+    }
     this.hideAyahActionBar();
 
     const contentBox = document.getElementById('quran-reader-content');
@@ -1091,12 +1229,22 @@ class NoorApp {
     }
 
     this.renderReaderContent(surah);
+    this.updateAudioScopeUI();
 
     // Scroll to requested ayah if startAyahNum > 1
     if (startAyahNum > 1) {
       setTimeout(() => {
         this.selectAyah(startAyahNum - 1, true);
       }, 300);
+    }
+
+    // If player was already active and not auto-playing: update player to new Surah and wait for user to press play or close!
+    if (wasPlayerActive && !autoPlay) {
+      this.preparePlayerForSurah(surah, startAyahNum - 1);
+    } else if (autoPlay) {
+      setTimeout(() => {
+        this.playAyah(this.currentAyahIndex);
+      }, 250);
     }
   }
 
@@ -1328,14 +1476,17 @@ class NoorApp {
   }
 
   // Switch between Surahs forward (+1) or backward (-1) via the two small floating buttons
-  navigateToAdjacentSurah(direction) {
+  async navigateToAdjacentSurah(direction) {
     if (!this.currentSurah) return;
     const targetId = this.currentSurah.number + direction;
     if (targetId >= 1 && targetId <= 114) {
-      if (!this.audioPlayer.paused) {
-        this.stopQuranPlayback();
+      const wasPlayerActive = this.isReaderAudioDockOpen ||
+                              (!this.audioPlayer.paused && this.audioPlayer.src) ||
+                              (!document.getElementById('floating-mini-player')?.classList.contains('hidden'));
+      await this.openSurahReader(targetId, 1, false);
+      if (wasPlayerActive && this.currentSurah) {
+        this.preparePlayerForSurah(this.currentSurah, 0);
       }
-      this.openSurahReader(targetId, 1);
     }
   }
 
@@ -1437,10 +1588,96 @@ class NoorApp {
     }
   }
 
-  // Play Ayah audio (called explicitly when user presses Play)
+  // Prepare player on a new surah in paused state, waiting for user to press play or close
+  preparePlayerForSurah(surah, startAyahIndex = 0) {
+    if (!surah || !surah.ayahs || surah.ayahs.length === 0) return;
+
+    this.isAudioStopped = false;
+    this.currentSurah = surah;
+    this.currentAyahIndex = Math.max(0, Math.min(startAyahIndex, surah.ayahs.length - 1));
+    this.selectedAyahIndex = null;
+
+    // Disconnect event handlers so pausing old playback does not trigger advance
+    this.audioPlayer.onerror = null;
+    this.audioPlayer.onended = null;
+
+    // Pause any active playback from previous surah
+    if (this.audioPlayer) {
+      try {
+        this.audioPlayer.pause();
+        this.audioPlayer.currentTime = 0;
+      } catch (e) {}
+    }
+
+    if (this.audioProgressInterval) {
+      clearInterval(this.audioProgressInterval);
+      this.audioProgressInterval = null;
+    }
+
+    const ayah = surah.ayahs[this.currentAyahIndex];
+
+    // Prime the audio player with the new ayah audio without playing
+    if (ayah && ayah.audio) {
+      this.audioPlayer.src = ayah.audio;
+      this.audioPlayer.playbackRate = this.audioSpeed;
+    }
+
+    // Reset progress UI & times
+    const fill = document.getElementById('reader-audio-progress-fill');
+    if (fill) fill.style.width = '0%';
+    const curTimeEl = document.getElementById('reader-audio-time-current');
+    if (curTimeEl) curTimeEl.innerText = '00:00';
+    const totTimeEl = document.getElementById('reader-audio-time-total');
+    if (totTimeEl) totTimeEl.innerText = '00:00';
+
+    // Update Dock Meta Info
+    const isAr = this.isArabic();
+    const ayahBadge = document.getElementById('reader-audio-ayah-badge');
+    if (ayahBadge) {
+      ayahBadge.innerText = isAr
+        ? `الآية ${this.toArabicNumerals(ayah.numberInSurah)} من ${this.toArabicNumerals(surah.numberOfAyahs)}`
+        : `Ayah ${ayah.numberInSurah} of ${surah.numberOfAyahs}`;
+    }
+    const surahTitle = document.getElementById('reader-audio-surah-title');
+    if (surahTitle) {
+      surahTitle.innerText = isAr ? surah.name : surah.englishName;
+    }
+
+    // Explicitly set UI to paused (Play icon shown)
+    this.updatePlayPauseUI(false);
+
+    // Keep / show dock if reader is open
+    const readerModal = document.getElementById('view-quran-reader');
+    const isReaderVisible = readerModal && !readerModal.classList.contains('hidden');
+    if (isReaderVisible) {
+      this.toggleReaderAudioDock(true);
+    } else {
+      // Update floating mini player and keep it visible
+      this.updateMiniPlayerUI(false);
+      const mini = document.getElementById('floating-mini-player');
+      if (mini) mini.classList.remove('hidden');
+    }
+
+    // Highlight the starting ayah node if in reader
+    const recitingNodes = document.querySelectorAll('.active-reciting');
+    recitingNodes.forEach(node => node.classList.remove('active-reciting'));
+    const newEl = document.getElementById(`ayah-node-${this.currentAyahIndex}`);
+    if (newEl) {
+      newEl.classList.add('active-reciting');
+    }
+
+    // Preload next Ayah audio if Skip Stops is enabled
+    if (this.isSkipStopsEnabled) {
+      this.preloadNextAyahAudio(this.currentAyahIndex + 1);
+    }
+  }
+
+  // Play Ayah audio (called explicitly when user presses Play or during auto advance)
   playAyah(index) {
     if (!this.currentSurah || !this.currentSurah.ayahs) return;
     if (index < 0 || index >= this.currentSurah.ayahs.length) return;
+
+    this.isAudioStopped = false;
 
     // Reset previous active reciting styling
     const prevEl = document.getElementById(`ayah-node-${this.currentAyahIndex}`);
@@ -1480,6 +1717,11 @@ class NoorApp {
       this.updateMiniPlayerUI(true);
       this.startAudioProgressTracking();
 
+      // Preload next Ayah audio if Skip Stops is enabled
+      if (this.isSkipStopsEnabled) {
+        this.preloadNextAyahAudio(index + 1);
+      }
+
       // Show pulsing dot on header toggle button
       const activeDot = document.getElementById('reader-audio-active-dot');
       if (activeDot) activeDot.classList.remove('hidden');
@@ -1487,9 +1729,10 @@ class NoorApp {
       this.showToast(isAr ? 'عذراً، التسجيل الصوتي غير متوفر لهذه الآية' : 'Audio recording not available for this ayah', 'info');
     }
 
-    // Multi-tier audio fallback handler
+    // Multi-tier audio fallback handler with strict stopped check
     let fallbackAttempt = 0;
     this.audioPlayer.onerror = () => {
+      if (this.isAudioStopped || !this.audioPlayer.src) return;
       console.warn("Audio playback error on ayah", ayah.numberInSurah, "- attempting fallback CDN");
       fallbackAttempt++;
 
@@ -1516,35 +1759,282 @@ class NoorApp {
         }
       }
 
-      if (nextUrl) {
+      if (nextUrl && !this.isAudioStopped) {
         this.audioPlayer.src = nextUrl;
         this.audioPlayer.play().catch(e => {
           console.warn("Fallback play error:", e);
-          this.advanceOrFinishAyah();
+          if (!this.isAudioStopped) {
+            this.advanceOrFinishAyah();
+          }
         });
-      } else {
+      } else if (!this.isAudioStopped) {
         this.advanceOrFinishAyah();
       }
     };
 
-    // Auto advance to next ayah on finish (or repeat current if repeat mode active)
+    // Auto advance to next ayah on finish
     this.audioPlayer.onended = () => {
+      if (this.isAudioStopped) return;
       this.advanceOrFinishAyah();
     };
   }
 
-  advanceOrFinishAyah() {
+  // Preload upcoming Ayah audio for seamless playback without stops
+  preloadNextAyahAudio(nextIdx) {
+    if (!this.currentSurah || !this.currentSurah.ayahs) return;
+    let nextAudioUrl = null;
+    if (nextIdx < this.currentSurah.ayahs.length) {
+      nextAudioUrl = this.currentSurah.ayahs[nextIdx].audio;
+    } else if (this.audioPlayScope === 'all' && this.currentSurah.number < 114) {
+      // Background preload for next surah
+      this.api.getSurah(this.currentSurah.number + 1, this.currentReciter);
+    }
+    if (nextAudioUrl) {
+      try {
+        const preloader = new Audio();
+        preloader.preload = 'auto';
+        preloader.src = nextAudioUrl;
+      } catch (e) {}
+    }
+  }
+
+  // Advance to next Ayah or next Surah based on selected scope
+  async advanceOrFinishAyah() {
+    if (this.isAudioStopped) return;
     const isAr = this.isArabic();
-    if (this.isAyahRepeatActive) {
+
+    // 1. Single Ayah repeat mode
+    if (this.audioPlayScope === 'ayah' || this.isAyahRepeatActive) {
       this.playAyah(this.currentAyahIndex);
-    } else if (this.currentSurah && this.currentSurah.ayahs && this.currentAyahIndex + 1 < this.currentSurah.ayahs.length) {
+      return;
+    }
+
+    // 2. Next Ayah within current Surah
+    if (this.currentSurah && this.currentSurah.ayahs && this.currentAyahIndex + 1 < this.currentSurah.ayahs.length) {
       this.playAyah(this.currentAyahIndex + 1);
+      return;
+    }
+
+    // 3. End of current Surah reached!
+    if (this.audioPlayScope === 'all') {
+      // Whole Quran continuous playback mode (Surah 1 to 114)
+      if (this.currentSurah && this.currentSurah.number < 114) {
+        const nextSurahId = this.currentSurah.number + 1;
+        const nextSurahMeta = this.quranData.SURAHS.find(s => s.id === nextSurahId);
+        const nextName = nextSurahMeta ? (isAr ? `سورة ${nextSurahMeta.name}` : nextSurahMeta.englishName) : `Surah ${nextSurahId}`;
+
+        const readerModal = document.getElementById('view-quran-reader');
+        const isReaderVisible = readerModal && !readerModal.classList.contains('hidden');
+
+        if (isReaderVisible) {
+          await this.openSurahReader(nextSurahId, 1, false);
+          this.preparePlayerForSurah(this.currentSurah, 0);
+        } else {
+          // Play in background / mini-player mode
+          const surahData = await this.api.getSurah(nextSurahId, this.currentReciter);
+          if (surahData && surahData.ayahs && surahData.ayahs.length > 0) {
+            this.preparePlayerForSurah(surahData, 0);
+          } else {
+            this.stopQuranPlayback();
+          }
+        }
+
+        this.showToast(
+          isAr
+            ? `تم الانتقال إلى ${nextName} • المشغل بانتظار التشغيل أو الإغلاق 📖`
+            : `Moved to ${nextName} • Player waiting for play or close 📖`,
+          'auto_stories'
+        );
+      } else {
+        // Completed all 114 Surahs of the Holy Quran
+        this.stopQuranPlayback();
+        this.showToast(isAr ? 'تمت بحمد الله تلاوة القرآن الكريم كاملاً! 🤲🤍' : 'Completed recitation of the entire Holy Quran! 🤲🤍', 'verified');
+      }
+    } else if (this.audioPlayScope === 'surah') {
+      // Single Surah mode
+      if (this.isSurahRepeatActive) {
+        this.showToast(isAr ? 'إعادة تلاوة السورة الكريمة 🔁' : 'Repeating Surah recitation 🔁', 'repeat');
+        this.playAyah(0);
+      } else {
+        this.stopQuranPlayback();
+        this.showToast(isAr ? `تمت تلاوة سورة ${this.currentSurah.name} كاملة بحمد الله 🤲` : `Completed Surah ${this.currentSurah.englishName} recitation! 🤲`, 'check_circle');
+      }
+    }
+  }
+
+  // Play previous Ayah or jump to previous Surah
+  async playPreviousAyahOrSurah() {
+    if (!this.currentSurah || !this.currentSurah.ayahs) return;
+    if (this.currentAyahIndex > 0) {
+      this.playAyah(this.currentAyahIndex - 1);
+    } else if (this.audioPlayScope === 'all' && this.currentSurah.number > 1) {
+      const prevSurahId = this.currentSurah.number - 1;
+      const isReaderVisible = !document.getElementById('view-quran-reader')?.classList.contains('hidden');
+
+      if (isReaderVisible) {
+        await this.openSurahReader(prevSurahId, 1, false);
+        this.preparePlayerForSurah(this.currentSurah, 0);
+      } else {
+        const prevData = await this.api.getSurah(prevSurahId, this.currentReciter);
+        if (prevData && prevData.ayahs) {
+          this.preparePlayerForSurah(prevData, 0);
+        }
+      }
     } else {
-      this.updatePlayPauseUI(false);
-      this.updateMiniPlayerUI(false);
-      const activeDot = document.getElementById('reader-audio-active-dot');
-      if (activeDot) activeDot.classList.add('hidden');
-      this.showToast(isAr ? 'تمت تلاوة السورة الكريمة كاملة بحمد الله 🤲' : 'Completed Surah recitation! 🤲', 'check_circle');
+      this.playAyah(0);
+    }
+  }
+
+  // Play next Ayah or jump to next Surah
+  async playNextAyahOrSurah() {
+    if (!this.currentSurah || !this.currentSurah.ayahs) return;
+    if (this.currentAyahIndex + 1 < this.currentSurah.ayahs.length) {
+      this.playAyah(this.currentAyahIndex + 1);
+    } else if (this.audioPlayScope === 'all' && this.currentSurah.number < 114) {
+      const nextSurahId = this.currentSurah.number + 1;
+      const isReaderVisible = !document.getElementById('view-quran-reader')?.classList.contains('hidden');
+      if (isReaderVisible) {
+        await this.openSurahReader(nextSurahId, 1, false);
+        this.preparePlayerForSurah(this.currentSurah, 0);
+      } else {
+        const nextData = await this.api.getSurah(nextSurahId, this.currentReciter);
+        if (nextData && nextData.ayahs) {
+          this.preparePlayerForSurah(nextData, 0);
+        }
+      }
+    }
+  }
+
+  // Skip between Surahs (+1 or -1) directly from player dock
+  async skipToSurah(direction) {
+    if (!this.currentSurah) return;
+    const targetSurahId = this.currentSurah.number + direction;
+    if (targetSurahId >= 1 && targetSurahId <= 114) {
+      const isReaderVisible = !document.getElementById('view-quran-reader')?.classList.contains('hidden');
+      if (isReaderVisible) {
+        await this.openSurahReader(targetSurahId, 1, false);
+        this.preparePlayerForSurah(this.currentSurah, 0);
+      } else {
+        const surahData = await this.api.getSurah(targetSurahId, this.currentReciter);
+        if (surahData && surahData.ayahs) {
+          this.preparePlayerForSurah(surahData, 0);
+        }
+      }
+      const isAr = this.isArabic();
+      const nextMeta = this.quranData?.SURAHS?.find(s => s.id === targetSurahId);
+      const name = nextMeta ? (isAr ? `سورة ${nextMeta.name}` : nextMeta.englishName) : `Surah ${targetSurahId}`;
+      this.showToast(isAr ? `تم التبديل إلى ${name} • اضغط تشغيل للبدء أو إغلاق 📖` : `Switched to ${name} • Press play to start or close 📖`, 'skip_next');
+    }
+  }
+
+  // Toggle playback scope: Whole Quran -> Single Surah -> Repeat Ayah -> Whole Quran
+  toggleAudioScope() {
+    if (this.audioPlayScope === 'all') {
+      this.audioPlayScope = 'surah';
+      this.isAyahRepeatActive = false;
+    } else if (this.audioPlayScope === 'surah') {
+      this.audioPlayScope = 'ayah';
+      this.isAyahRepeatActive = true;
+    } else {
+      this.audioPlayScope = 'all';
+      this.isAyahRepeatActive = false;
+    }
+    this.updateAudioScopeUI();
+
+    const isAr = this.isArabic();
+    const msgs = {
+      all: isAr ? 'نطاق التلاوة: المصحف كاملاً بالتتابع 📖' : 'Scope: Whole Quran continuously 📖',
+      surah: isAr ? 'نطاق التلاوة: السورة الحالية فقط 📜' : 'Scope: Current Surah only 📜',
+      ayah: isAr ? 'نطاق التلاوة: تكرار الآية الحالية 🔁' : 'Scope: Repeat current Ayah 🔁'
+    };
+    this.showToast(msgs[this.audioPlayScope] || '', 'auto_stories');
+  }
+
+  // Update UI indicators for current audio scope
+  updateAudioScopeUI() {
+    const isAr = this.isArabic();
+    const scopeBadge = document.getElementById('reader-scope-badge');
+    const scopeIcon = document.getElementById('reader-scope-icon');
+    const heroScopeLabel = document.getElementById('quran-hero-scope-label');
+    const repeatAyahBtn = document.getElementById('reader-repeat-ayah-btn');
+
+    const labels = {
+      all: isAr ? 'القرآن كاملاً' : 'Whole Quran',
+      surah: isAr ? 'سورة محددة' : 'Current Surah',
+      ayah: isAr ? 'تكرار الآية' : 'Repeat Ayah'
+    };
+
+    const icons = {
+      all: 'auto_stories',
+      surah: 'menu_book',
+      ayah: 'repeat_one'
+    };
+
+    if (scopeBadge) scopeBadge.innerText = labels[this.audioPlayScope] || labels.all;
+    if (scopeIcon) scopeIcon.innerText = icons[this.audioPlayScope] || 'auto_stories';
+    if (heroScopeLabel) heroScopeLabel.innerText = labels[this.audioPlayScope] || labels.all;
+    if (repeatAyahBtn) repeatAyahBtn.classList.toggle('is-active', this.audioPlayScope === 'ayah' || this.isAyahRepeatActive);
+  }
+
+  // Toggle skip stops / continuous flow
+  toggleSkipStops(forceVal = null) {
+    this.isSkipStopsEnabled = forceVal !== null ? forceVal : !this.isSkipStopsEnabled;
+    const isAr = this.isArabic();
+
+    const heroToggle = document.getElementById('quran-hero-skip-stops-toggle');
+    const dockToggle = document.getElementById('reader-skip-stops-btn');
+
+    if (heroToggle) heroToggle.classList.toggle('is-active', this.isSkipStopsEnabled);
+    if (dockToggle) dockToggle.classList.toggle('is-active', this.isSkipStopsEnabled);
+
+    this.showToast(
+      this.isSkipStopsEnabled
+        ? (isAr ? 'تم تفعيل تخطي التوقفات (تشغيل متصل وسلس) ⏩' : 'Skip stops enabled (seamless playback) ⏩')
+        : (isAr ? 'تم إيقاف تخطي التوقفات' : 'Skip stops disabled'),
+      'fast_forward'
+    );
+  }
+
+  // Start whole Quran continuous playback
+  async startWholeQuranPlayback(startSurahId = 1, startAyah = 1) {
+    this.audioPlayScope = 'all';
+    this.isAyahRepeatActive = false;
+    this.updateAudioScopeUI();
+    const isAr = this.isArabic();
+    this.showToast(isAr ? 'بدء الاستماع للقرآن الكريم كاملاً 📖' : 'Starting Full Quran Recitation 📖', 'auto_stories');
+    await this.openSurahReader(startSurahId, startAyah, true);
+  }
+
+  // Start single Surah playback
+  async startSurahPlayback(surahId) {
+    this.audioPlayScope = 'surah';
+    this.isAyahRepeatActive = false;
+    this.updateAudioScopeUI();
+    const isAr = this.isArabic();
+    const surahMeta = this.quranData.SURAHS.find(s => s.id === surahId);
+    const name = surahMeta ? (isAr ? `سورة ${surahMeta.name}` : surahMeta.englishName) : `Surah ${surahId}`;
+    this.showToast(isAr ? `بدء تلاوة ${name} 📜` : `Starting recitation of ${name} 📜`, 'menu_book');
+    await this.openSurahReader(surahId, 1, true);
+  }
+
+  // Populate hero card selects
+  populateQuranHeroSelects() {
+    const surahSelect = document.getElementById('quran-hero-surah-select');
+    const reciterSelect = document.getElementById('quran-hero-reciter-select');
+    const isAr = this.isArabic();
+
+    if (surahSelect && this.quranData.SURAHS) {
+      surahSelect.innerHTML = this.quranData.SURAHS.map(s => {
+        const title = isAr ? `${this.toArabicNumerals(s.id)}. سورة ${s.name}` : `${s.id}. ${s.englishName}`;
+        return `<option value="${s.id}">${title}</option>`;
+      }).join('');
+    }
+
+    if (reciterSelect && this.quranData.RECITERS) {
+      reciterSelect.innerHTML = this.quranData.RECITERS.map(r => {
+        const name = isAr ? r.name : r.englishName;
+        return `<option value="${r.id}" ${r.id === this.currentReciter ? 'selected' : ''}>${name}</option>`;
+      }).join('');
     }
   }
 
@@ -1552,8 +2042,8 @@ class NoorApp {
     if (!this.currentSurah || !this.currentSurah.ayahs) return;
     if (this.audioPlayer.paused) {
       const idx = this.selectedAyahIndex !== null ? this.selectedAyahIndex : this.currentAyahIndex;
-      // Resume if already loaded for the target ayah
-      if (this.audioPlayer.src && this.currentAyahIndex === idx && !isNaN(this.audioPlayer.duration) && this.audioPlayer.duration > 0) {
+      // Resume if already loaded mid-way for target ayah
+      if (this.audioPlayer.src && this.audioPlayer.currentTime > 0 && this.currentAyahIndex === idx) {
         this.audioPlayer.play().catch(e => console.warn("Audio play blocked:", e));
         this.updatePlayPauseUI(true);
         this.updateMiniPlayerUI(true);
@@ -1629,15 +2119,47 @@ class NoorApp {
     this.audioProgressInterval = setInterval(() => {
       if (!this.audioPlayer || this.audioPlayer.paused) return;
       this.updateAudioProgressUI();
-    }, 250);
+    }, 200);
   }
 
+  // Definitive audio stop: removes event listeners before clearing src to prevent ghost restarts
   stopQuranPlayback() {
-    this.audioPlayer.pause();
-    this.audioPlayer.src = '';
+    this.isAudioStopped = true;
+
+    // Disconnect event handlers so setting src='' or calling pause() will not trigger onerror or onended
+    this.audioPlayer.onerror = null;
+    this.audioPlayer.onended = null;
+
+    try {
+      this.audioPlayer.pause();
+      this.audioPlayer.removeAttribute('src');
+      this.audioPlayer.load();
+    } catch (e) {
+      console.warn("Audio cleanup error:", e);
+    }
+
+    if (this.audioProgressInterval) {
+      clearInterval(this.audioProgressInterval);
+      this.audioProgressInterval = null;
+    }
+
+    // Clear active-reciting highlights across DOM
+    const recitingNodes = document.querySelectorAll('.active-reciting');
+    recitingNodes.forEach(node => node.classList.remove('active-reciting'));
+
+    // Reset progress UI & times
+    const fill = document.getElementById('reader-audio-progress-fill');
+    if (fill) fill.style.width = '0%';
+    const curTimeEl = document.getElementById('reader-audio-time-current');
+    if (curTimeEl) curTimeEl.innerText = '00:00';
+    const totTimeEl = document.getElementById('reader-audio-time-total');
+    if (totTimeEl) totTimeEl.innerText = '00:00';
+
     this.updatePlayPauseUI(false);
+
     const activeDot = document.getElementById('reader-audio-active-dot');
     if (activeDot) activeDot.classList.add('hidden');
+
     const mini = document.getElementById('floating-mini-player');
     if (mini) mini.classList.add('hidden');
   }
@@ -1671,25 +2193,18 @@ class NoorApp {
     mini.classList.remove('hidden');
     const isAr = this.isArabic();
     const ayah = this.currentSurah.ayahs[this.currentAyahIndex];
+    if (!ayah) return;
 
-    document.getElementById('mini-player-surah').innerText = isAr ? this.currentSurah.name : this.currentSurah.englishName;
+    const surahEl = document.getElementById('mini-player-surah');
+    if (surahEl) surahEl.innerText = isAr ? this.currentSurah.name : this.currentSurah.englishName;
+
     const reciterName = this.quranData.RECITERS.find(r => r.id === this.currentReciter)?.name || '';
-    document.getElementById('mini-player-ayah').innerText = isAr
-      ? `الآية ${this.toArabicNumerals(ayah.numberInSurah)} • ${reciterName}`
-      : `Ayah ${ayah.numberInSurah} • ${reciterName}`;
-  }
-
-  startAudioProgressTracking() {
-    if (this.audioProgressInterval) clearInterval(this.audioProgressInterval);
-    this.audioProgressInterval = setInterval(() => {
-      const fill = document.getElementById('reader-audio-progress-fill');
-      if (!fill || this.audioPlayer.paused) return;
-      const duration = this.audioPlayer.duration || 0;
-      const current = this.audioPlayer.currentTime || 0;
-      if (duration > 0) {
-        fill.style.width = `${(current / duration) * 100}%`;
-      }
-    }, 200);
+    const ayahEl = document.getElementById('mini-player-ayah');
+    if (ayahEl) {
+      ayahEl.innerText = isAr
+        ? `الآية ${this.toArabicNumerals(ayah.numberInSurah)} • ${reciterName}`
+        : `Ayah ${ayah.numberInSurah} • ${reciterName}`;
+    }
   }
 
   closeQuranReader() {
@@ -1697,6 +2212,11 @@ class NoorApp {
     if (readerModal) readerModal.classList.add('hidden');
     document.body.classList.remove('reader-active');
     this.hideAyahActionBar();
+    if (this.currentSurah && (this.isReaderAudioDockOpen || this.audioPlayer.src) && !this.isAudioStopped) {
+      this.updateMiniPlayerUI(!this.audioPlayer.paused);
+      const mini = document.getElementById('floating-mini-player');
+      if (mini) mini.classList.remove('hidden');
+    }
   }
 
   saveBookmarkInternal(surahId, surahName, ayahNum) {
